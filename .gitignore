@@ -72,3 +72,27 @@ __pypackages__/
 
 
 # End of https://www.toptal.com/developers/gitignore/api/pythonvanilla
+/.idea/.gitignore
+/result_mgt/Scripts/activate
+/result_mgt/Scripts/activate.bat
+/result_mgt/Scripts/Activate.ps1
+/.idea/dataSources.xml
+/result_mgt/Scripts/deactivate.bat
+/result_mgt/Scripts/django-admin.exe
+/result_mgt/Scripts/easy_install.exe
+/result_mgt/Scripts/easy_install-3.8.exe
+/.idea/misc.xml
+/.idea/modules.xml
+/result_mgt/Scripts/pip.exe
+/result_mgt/Scripts/pip3.8.exe
+/result_mgt/Scripts/pip3.10.exe
+/result_mgt/Scripts/pip3.exe
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/result_mgt/Scripts/python.exe
+/result_mgt/Scripts/pythonw.exe
+/result_mgt/pyvenv.cfg
+/requirements.txt
+/.idea/result_mgt.iml
+/result_mgt/Scripts/sqlformat.exe
+/.idea/vcs.xml
