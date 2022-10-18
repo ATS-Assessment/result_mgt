@@ -29,7 +29,7 @@ class My_Class(generic.View):
         class_teacher = Klass.objects.filter(
             teacher=user,
         )
-        context={
+        context = {
             'class_teacher': class_teacher,
         }
         return render(request, self.template_name, context)
@@ -40,12 +40,13 @@ class CreateTeacherView(generic.View):
 
     def post(self, request, *args, **kwargs):
         form = TeacherForm(request.POST)
-        context ={
+        context = {
             'form': form,
         }
         if form.is_valid():
             form.save()
-            messages.success(request, "A Teacher has been created successfully")
+            messages.success(
+                request, "A Teacher has been created successfully")
             return HttpResponseRedirect(reverse(request.META.get('HTTP_REFERER')))
         else:
             messages.error(request, "Invalid Input")
@@ -68,8 +69,7 @@ class UserLogout(generic.View):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    admin = User.objects.filter(user_role='admin')
-                    if admin:
+                    if user.is_superuser:
                         return HttpResponseRedirect(reverse('home'))
                     else:
                         return HttpResponseRedirect(reverse('class'))
@@ -85,6 +85,3 @@ class UserLogout(generic.View):
     def post(self, request):
         logout(request)
         return HttpResponseRedirect(reverse('home'))
-
-
-

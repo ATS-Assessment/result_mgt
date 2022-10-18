@@ -39,11 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'klass',
-<<<<<<< HEAD
-    'result'
-=======
     'result',
->>>>>>> 44ef7d22a0f2a74ccf4ecb0fa9e8e14966389306
 ]
 
 MIDDLEWARE = [
@@ -94,8 +90,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'result_mgt',
-        'USER': 'result_mgt_user',
-        'PASSWORD': 'adminadmin',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
     }
