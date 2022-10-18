@@ -22,7 +22,7 @@ def __previous():
 #     return "".join(random.choices(string.ascii_lowercase + string.digits, k=7))
 
 
-class Class(models.Model):
+class Klass(models.Model):
     SESSION_CHOICES = (
         ("First term", "First term"),
         ("Second term", "Second term"),
