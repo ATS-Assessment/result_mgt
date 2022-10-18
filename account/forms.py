@@ -21,9 +21,8 @@ class TeacherForm(forms.ModelForm):
 
     def clean(self):
         name = self.cleaned_data.get('name')
-        digits = string.digits
 
-        if len(name) < 5 or name.startwith(digits):
+        if len(name) < 5:
             self._errors['username'] = self.error_class([
                 'Minimum 5 characters required'
             ])

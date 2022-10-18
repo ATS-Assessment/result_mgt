@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.views import generic
 from django.contrib import messages
@@ -10,7 +9,7 @@ from django.contrib.auth import get_user_model
 from .forms import TeacherForm, UserLoginForm
 from django import forms
 
-from Klass.models import Klass
+from ..klass.models import Klass
 
 User = get_user_model()
 
@@ -22,11 +21,18 @@ class Home(generic.TemplateView):
 
 
 class My_Class(generic.View):
+    template_name = 'teacher_class.html'
 
     def get(self, request, *args, **kwargs):
         user = request.user
         teacher = User.objects.filter(role='teacher')
-        class_teacher = Klass.objects.filter(klass__teacher=teacher)
+        class_teacher = Klass.objects.filter(
+            teacher=user,
+        )
+        context={
+            'class_teacher': class_teacher,
+        }
+        return render(request, self.template_name, context)
 
 
 class CreateTeacherView(generic.View):
@@ -44,6 +50,10 @@ class CreateTeacherView(generic.View):
         else:
             messages.error(request, "Invalid Input")
         return render(request, self.template_name, context)
+
+
+class TeacherSuspendedView(generic.View):
+    pass
 
 
 class UserLogout(generic.View):
