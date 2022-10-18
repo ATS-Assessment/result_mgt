@@ -95,8 +95,3 @@ class UserLogout(generic.View):
     def post(self, request):
         logout(request)
         return HttpResponseRedirect(reverse('home'))
-
-
-
-
-
