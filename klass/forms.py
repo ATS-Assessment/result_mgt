@@ -1,12 +1,12 @@
 
 from django import forms
-from .models import Class
+from .models import Klass
 
 
 class ClassForm(forms.ModelForm):
 
     class Meta:
-        model = Class
+        model = Klass
         fields = ('name', 'teacher', 'session',"password")
 
     def __init__(self, *args, **kwargs):

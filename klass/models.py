@@ -7,6 +7,7 @@ from django.db import models
 import random
 import string
 
+
 # Create your models here.
 
 
@@ -31,8 +32,8 @@ class Klass(models.Model):
     name = models.CharField(max_length=100)
     no_of_students = models.IntegerField()
     subject = models.JSONField(default=_subject_json)
-    teacher = models.ForeignKey("account.User",on_delete=models.CASCADE,
-                                blank=True, null=True)
+    teacher = models.ForeignKey(
+        "account.User", on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     password = models.CharField(max_length=50)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
@@ -54,3 +55,6 @@ class Subject(models.Model):
     )
     name = models.CharField(max_length=50)
     level = models.CharField(choices=LEVEL, max_length=50)
+
+    def __str__(self) -> str:
+        return self.name
