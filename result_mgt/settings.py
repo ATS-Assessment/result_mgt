@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'klass',
+    'result',
 ]
 
 MIDDLEWARE = [
@@ -73,16 +76,27 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'result_mgt',
+#         'USER': 'result_mgt_user',
+#         'PASSWORD': 'password',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'result_mgt_db',
-        'USER': 'postgres',
-        'PASSWORD':'@F3X2022',
-        'HOST':'localhost',
-        'PORT':'5432',
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'result_mgt',
+        'USER': 'result_mgt_user',
+        'PASSWORD': 'adminadmin',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 AUTH_USER_MODEL = 'account.User'
 
