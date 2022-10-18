@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from .forms import TeacherForm, UserLoginForm
 from django import forms
 
-from Klass.models import Klass
+from klass.models import Klass
 
 User = get_user_model()
 
