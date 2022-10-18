@@ -15,17 +15,24 @@ from .forms import ClassForm
 # def create_class()
 
 
-class ClassCreateView(LoginRequiredMixin, CreateView):
-    model = Class
-    form_class = ClassForm
-    template_name = 'class/create.html'
+# class ClassCreateView(LoginRequiredMixin, CreateView):
+#     model = Class
+#     form_class = ClassForm
+#     template_name = 'class/create.html'
 
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.save()
-        messages.success(
-            self.request, 'The Class was successfully created!')
-        return redirect('class-detail')
+#     def form_valid(self, form):
+#         instance = form.save(commit=False)
+#         instance.save()
+#         messages.success(
+#             self.request, 'The Class was successfully created!')
+#         return redirect('class-detail')
+
+def create_class(request):
+    if request.method == 'POST':
+        class_form = ClassForm(request.POST)
+        if class_form.is_valid():
+            instance = class_form.save(commit=False)
+            password = class_form.cleaned_data.get("password")
 
 
 class EditClass(LoginRequiredMixin, UpdateView):

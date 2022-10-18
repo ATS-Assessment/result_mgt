@@ -18,8 +18,8 @@ def __previous():
     return list
 
 
-def generate_token():
-    return "".join(random.choices(string.ascii_lowercase + string.digits, k=7))
+# def generate_token():
+#     return "".join(random.choices(string.ascii_lowercase + string.digits, k=7))
 
 
 class Class(models.Model):
@@ -33,15 +33,23 @@ class Class(models.Model):
     subject = models.JSONField(default=_subject_json)
     teacher = models.ForeignKey("account.User", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    password = models.CharField(max_length=50)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
-    token = models.CharField(max_length=30, default=generate_token)
+    # token = models.CharField(max_length=30, default=generate_token)
     previous_teachers = models.JSONField(default=__previous)
 
     def __str__(self) -> str:
         return self.name
 
-    birthday = models.DateTimeField()
-
     def get_year(self):
         return self.year.year
+
+
+class Subject(models.Model):
+    LEVEL = (
+        ("JUNIOR", "JUNIOR"),
+        ("SENIOR", "SENIOR")
+    )
+    name = models.CharField(max_length=50)
+    level = models.CharField(choices=LEVEL,)
