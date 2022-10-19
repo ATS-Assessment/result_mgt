@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
 
-from .models import Klass
+from .models import Klass, Subject
 from .forms import ClassForm, ClassLoginForm, SubjectForm
 from account.models import User
 # from result.models import
@@ -42,8 +42,14 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
                                                         "errors": class_form.errors})
 
     def get(self, request, *args, **kwargs):
+        senior_subjects = Subject.objects.filter(level="SENIOR")
+        junior_subjects = Subject.objects.filter(level="JUNIOR")
+        users = User.objects.filter(is_superuser=False)
         return render(request, self.template_name, {
             "login_form": self.form_class(),
+            "senior_subject": senior_subjects,
+            "junior_subject": junior_subjects,
+            "users": users
         })
 
 
