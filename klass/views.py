@@ -55,8 +55,7 @@ class CreateSubjectView(CreateView):
     def post(self, request, *args, **kwargs):
         subject_data = self.form_class(request.POST)
 
-
-
+        return
 
 
 class EditClass(LoginRequiredMixin, UpdateView):
