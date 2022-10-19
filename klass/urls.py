@@ -10,4 +10,5 @@ urlpatterns = [
     path('edit/<int:pk>/', views.EditClass.as_view(), name="edit-class"),
     path('create', views.CreateSubjectView.as_view(), name="create-subject"),
     path('dashboard/', views.dashboard, name="dashboard"),
+    path('admin-list', views.admin_teacher_list, name="admin-teacher-list"),
 ]

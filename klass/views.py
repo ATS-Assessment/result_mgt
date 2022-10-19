@@ -7,11 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
+from result.models import Result
+
 from .models import Klass
 from .forms import ClassForm
 
 from .models import Klass, Subject
-from .forms import ClassForm, ClassLoginForm
+from .forms import ClassForm, ClassLoginForm, SubjectForm
 # SubjectForm
 
 from account.models import User
@@ -146,8 +148,13 @@ def dashboard(request):
         "teachers": teachers})
 
 
-def dashboard(request):
+def admin_teacher_list(request):
+    context = {
+        "classes": Klass.objects.select_related('teacher').all(),
+        "classes": Klass.objects.all().count(),
+        "users": User.objects.filter(is_superuser=False).count(),
+        # "results": Result.objects.all(),
+        "result_count": Result.objects.all().count(),
+    }
 
-    teachers = User.objects.all()
-    return render(request, 'klass/landing_page.html', {
-        "teachers": teachers})
+    return render(request, "klass/admin_teacher_list.html", context)

@@ -130,3 +130,7 @@ class UserLogout(generic.View):
     def post(self, request):
         logout(request)
         return HttpResponseRedirect(reverse('home'))
+
+
+def landing_page(request):
+    return render(request, 'klass/landing_page.html',)
