@@ -27,40 +27,19 @@ class Klass(models.Model):
         ("Third term", "Third term"),
     )
     name = models.CharField(max_length=100)
-<<<<<<< HEAD
     no_of_students = models.IntegerField()
-    subject = models.JSONField(default=_subject_json())
-=======
-    no_of_students = models.PositiveIntegerField(validators=[MinValueValidator(0),
-                                                             MaxValueValidator(40)])
-    # subject = models.JSONField(default=_subject_json)
->>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
-    teacher = models.ForeignKey(
-        "account.User", on_delete=models.CASCADE, blank=True, null=True)
+    subject = models.JSONField(default=_subject_json)
+    teacher = models.ForeignKey("account.User", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
-    # token = models.CharField(max_length=30, default=generate_token)
-<<<<<<< HEAD
-    previous_teachers = models.JSONField(default=_previous())
-=======
-    # previous_teachers = models.JSONField(default=_previous)
->>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
+    token = models.CharField(max_length=30, default=generate_token)
+    previous_teachers = models.JSONField(default=__previous)
 
     def __str__(self) -> str:
         return self.name
 
-    # def get_year(self):
-    #     return self.year.year
+    birthday = models.DateTimeField()
 
-
-class Subject(models.Model):
-    LEVEL = (
-        ("JUNIOR", "JUNIOR"),
-        ("SENIOR", "SENIOR")
-    )
-    name = models.CharField(max_length=50)
-    level = models.CharField(choices=LEVEL, max_length=50)
-
-    def __str__(self) -> str:
-        return self.name
+    def get_year(self):
+        return self.year.year

@@ -7,15 +7,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
-<<<<<<< HEAD
 from .models import Klass
 from .forms import ClassForm
-=======
 
 from .models import Klass
 from .forms import ClassForm, ClassLoginForm
 from account.models import User
->>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
 # from result.models import
 
 # Create your views here.
@@ -35,13 +32,6 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
             'class_form': class_form,
         }
         if class_form.is_valid():
-<<<<<<< HEAD
-            instance = class_form.save(commit=False)
-            password = class_form.cleaned_data.get("password")
-    else:
-
-        return render(request, 'klass/add_class.html')
-=======
             instance = class_form.save()
             messages.success(
                 self.request, f"The Class {instance.name} was successfully created!")
@@ -56,7 +46,6 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         return render(request, self.template_name, {
             "login_form": self.form_class(),
         })
->>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
 
 
 class EditClass(LoginRequiredMixin, UpdateView):
@@ -89,26 +78,13 @@ class EditClass(LoginRequiredMixin, UpdateView):
 def class_detail(request, pk):
 
     context = {}
-<<<<<<< HEAD
-    if request.user.is_superuser:
-        context["classes"] = Klass.objects.select_related('teacher')
-        # context["results"] = Result.object.all()
-=======
     # if request.user.is_superuser:
     context["class"] = Klass.objects.select_related('teacher').get(pk=pk)
     # context["results"] = Result.object.all()
->>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
 
     return render(request, 'klass/klass_detail.html', context)
 
 
-<<<<<<< HEAD
-def class_list(request):
-    context = {
-        "classes": Klass.objects.all()
-    }
-    return render(request, 'class-list.html', context)
-=======
 class ClassLogin(View):
     template_name = "klass/login.html"
     form_class = ClassLoginForm
@@ -141,4 +117,3 @@ class ClassLogin(View):
         return render(request, self.template_name, {
             "login_form": self.form_class(),
         })
->>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
