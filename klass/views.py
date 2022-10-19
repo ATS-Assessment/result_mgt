@@ -7,9 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
+from .models import Klass
+from .forms import ClassForm
 
 from .models import Klass, Subject
-from .forms import ClassForm, ClassLoginForm, SubjectForm
+from .forms import ClassForm, ClassLoginForm
+# SubjectForm
+
 from account.models import User
 # from result.models import
 
@@ -22,15 +26,13 @@ from account.models import User
 class ClassCreateView(LoginRequiredMixin, CreateView):
     model = Klass
     form_class = ClassForm
-    template_name = 'class/create.html'
+    template_name = 'klass/add_class.html'
 
     def post(self, request, *args, **kwargs):
+        print(request.POST)
         class_form = self.form_class(request.POST)
-        context = {
-            'class_form': class_form,
-        }
+
         if class_form.is_valid():
-            # subject = class_form.cleaned_data['subject']
             instance = class_form.save()
             messages.success(
                 self.request, f"The Class {instance.name} was successfully created!")
@@ -45,11 +47,13 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         senior_subjects = Subject.objects.filter(level="SENIOR")
         junior_subjects = Subject.objects.filter(level="JUNIOR")
         users = User.objects.filter(is_superuser=False)
+        sessions = ["2022/2023", "2023/2024", "2024/2025"]
         return render(request, self.template_name, {
             "login_form": self.form_class(),
             "senior_subject": senior_subjects,
             "junior_subject": junior_subjects,
-            "users": users
+            "users": users,
+            "sessions": sessions
         })
 
 
@@ -67,7 +71,7 @@ class CreateSubjectView(CreateView):
 class EditClass(LoginRequiredMixin, UpdateView):
     model = Klass
     form_class = ClassForm
-    template_name = "klass/create_subject.html"
+    template_name = "klass/edit_klass.html"
     login_url = 'login'
 
     def post(self, request, *args, **kwargs):

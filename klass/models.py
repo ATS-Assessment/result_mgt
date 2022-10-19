@@ -1,9 +1,7 @@
-
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 import random
 import string
-
 # Create your models here.
 
 
@@ -13,8 +11,6 @@ def _subject_json():
 
 def _previous():
     return list
-
-
 # def generate_token():
 #     return "".join(random.choices(string.ascii_lowercase + string.digits, k=7))
 
@@ -35,12 +31,10 @@ class Klass(models.Model):
     password = models.CharField(max_length=50)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
-
     previous_teachers = models.JSONField(default=_previous())
 
     def __str__(self) -> str:
         return self.name
-
     # def get_year(self):
     #     return self.year.year
 
