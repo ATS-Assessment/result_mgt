@@ -26,12 +26,33 @@ class My_Class(generic.View):
     def get(self, request, *args, **kwargs):
         user = request.user
         teacher = User.objects.filter(role='teacher')
+<<<<<<< HEAD
         class_teacher = Klass.objects.filter(
             teacher=user,
         )
         context = {
             'class_teacher': class_teacher,
         }
+=======
+        class_teacher = Klass.objects.filter(klass__teacher=teacher)
+
+
+class CreateTeacherView(generic.View):
+    template_name = 'user.html'
+
+    def post(self, request, *args, **kwargs):
+        form = TeacherForm(request.POST)
+        context = {
+            'form': form,
+        }
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, "A Teacher has been created successfully")
+            return HttpResponseRedirect(reverse(request.META.get('HTTP_REFERER')))
+        else:
+            messages.error(request, "Invalid Input")
+>>>>>>> 19cc6f99a844e8d4d3f2cb94d4b489002d67fa75
         return render(request, self.template_name, context)
 
 
