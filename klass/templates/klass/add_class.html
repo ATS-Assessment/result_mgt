@@ -1,6 +1,7 @@
 {% extends 'admin_base_template.html' %}
 {% load static %}
 {% block content %}
+{% include 'messages.html' %}
   <form class="space-y-8 divide-y divide-gray-200" action="{% url 'create-class' %}" method="POST">
     {% csrf_token %}
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
@@ -13,7 +14,7 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="class_name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Class name</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="class-name" id="class-name" autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
+              <input type="text" name="class_name" id="class_name" autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 

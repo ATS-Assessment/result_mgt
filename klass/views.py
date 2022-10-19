@@ -28,22 +28,60 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
     form_class = ClassForm
     template_name = 'klass/add_class.html'
 
-    def post(self, request, *args, **kwargs):
-        print(request.POST)
-        class_form = self.form_class(request.POST)
+    def search_character(self, characters, request_body):
+        data = list(request_body.keys())
+        final_data = []
+        for char in data:
+            if char.startswith(characters) or char.endswith(characters):
+                final_data.append(char)
+        return final_data
 
-        if class_form.is_valid():
-            instance = class_form.save()
+    def find_subjects(self, args, request_body):
+        subjects = self.search_character(args, request_body)
+        found_subject = []
+        for data in subjects:
+            found_subject.append(request_body[data])
+        return found_subject
+
+    def post(self, request, *args, **kwargs):
+        class_name = request.POST.get('class_name', '')
+        class_size = request.POST.get('class_size', '')
+        educator = request.POST.get('teacher', '')
+        session = request.POST.get('session', '')
+        dict_object = request.POST.dict()
+        subjects = self.find_subjects('subject', dict_object)
+        print({
+            "class_name": class_name,
+            "class_size": class_size,
+            "educator": educator,
+            "session": session,
+            "subjects": subjects
+        })
+        request_body = {
+            "name": class_name,
+            "no_of_students": class_size,
+            "teacher": User.objects.get(full_name=educator),
+            "session": session,
+            "subjects": subjects
+        }
+
+        check_class = Klass.objects.filter(name=class_name)
+        if check_class:
+            messages.error(
+                request, f"A class with name {class_name} already exist")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+        save_class = Klass(**request_body)
+        save_class.save()
+        if save_class:
             messages.success(
-                self.request, f"The Class {instance.name} was successfully created!")
-            return HttpResponseRedirect(reverse('class-detail'), args=[instance.pk])
+                self.request, f"{class_name} was successfully created!")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
         else:
             messages.error(
-                self.request, '')
-            return render(request, self.template_name, {"class_form": self.form_class(),
-                                                        "errors": class_form.errors})
+                request, 'Error creating class, check and try creating class again')
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         senior_subjects = Subject.objects.filter(level="SENIOR")
         junior_subjects = Subject.objects.filter(level="JUNIOR")
         users = User.objects.filter(is_superuser=False)
