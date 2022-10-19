@@ -9,6 +9,7 @@ __pycache__/
 db.sqlite3
 migrations
 # C extensions
+theme
 *.so
 .resenv
 resenv
