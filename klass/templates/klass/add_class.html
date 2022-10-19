@@ -1,7 +1,8 @@
 {% extends 'admin_base_template.html' %}
 {% load static %}
 {% block content %}
-  <form class="space-y-8 divide-y divide-gray-200">
+  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'create-class' %}" method="POST">
+    {% csrf_token %}
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
         <div>
@@ -10,21 +11,21 @@
         </div>
         <div class="space-y-6 sm:space-y-5">
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="first-name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Class name</label>
+            <label for="class_name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Class name</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="first-name" id="first-name" autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md" />
+              <input type="text" name="class-name" id="class-name" autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="last-name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Number of Students</label>
+            <label for="" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Number of Students</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md" />
+              <input type="text" name="class_size" id="class_size" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="country" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Subjects</label>
+            <label for="subjects" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Subjects</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <div>
                 <label class="text-base font-medium text-gray-900">Available Junior Subjects</label>
@@ -32,10 +33,12 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    <div class="flex items-center">
-                      <input id="email" name="notification-method" type="radio" checked class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
-                      <label for="email" class="ml-3 block text-sm font-medium text-gray-700">Email</label>
-                    </div>
+                    {% for subject in junior_subject %}
+                      <div class="flex items-center">
+                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
+                        <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
+                      </div>
+                    {% endfor %}
                   </div>
                 </fieldset>
               </div>
@@ -45,10 +48,12 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    <div class="flex items-center">
-                      <input id="email" name="notification-method" type="radio" checked class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
-                      <label for="email" class="ml-3 block text-sm font-medium text-gray-700">Email</label>
-                    </div>
+                    {% for subject in senior_subject %}
+                      <div class="flex items-center">
+                        <input id="subject" name={{ subject.name|add:"-subject" }} type="radio" value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
+                        <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
+                      </div>
+                    {% endfor %}
                   </div>
                 </fieldset>
               </div>
@@ -58,10 +63,10 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="country" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Educator</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="country" name="country" autocomplete="country-name" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
-                <option>United States</option>
-                <option>Canada</option>
-                <option>Mexico</option>
+              <select id="teacher" name="teacher" autocomplete="country-name" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
+                {% for user in users %}
+                  <option>{{ user.full_name }}</option>
+                {% endfor %}
               </select>
             </div>
           </div>
@@ -69,10 +74,10 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="country" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Session</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="country" name="country" autocomplete="country-name" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
-                <option>United States</option>
-                <option>Canada</option>
-                <option>Mexico</option>
+              <select id="session" name="session" autocomplete="session" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
+                {% for session in sessions %}
+                <option>{{ session }}</option>
+              {% endfor %}
               </select>
             </div>
           </div>

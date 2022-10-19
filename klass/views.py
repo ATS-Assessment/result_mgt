@@ -10,8 +10,10 @@ from django.contrib.auth import authenticate, login
 from .models import Klass
 from .forms import ClassForm
 
-from .models import Klass
+from .models import Klass, Subject
 from .forms import ClassForm, ClassLoginForm
+# SubjectForm
+
 from account.models import User
 # from result.models import
 
@@ -27,10 +29,9 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
     template_name = 'klass/add_class.html'
 
     def post(self, request, *args, **kwargs):
+        print(request.POST)
         class_form = self.form_class(request.POST)
-        context = {
-            'class_form': class_form,
-        }
+
         if class_form.is_valid():
             instance = class_form.save()
             messages.success(
@@ -43,20 +44,28 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
                                                         "errors": class_form.errors})
 
     def get(self, request, *args, **kwargs):
+        senior_subjects = Subject.objects.filter(level="SENIOR")
+        junior_subjects = Subject.objects.filter(level="JUNIOR")
+        users = User.objects.filter(is_superuser=False)
+        sessions = ["2022/2023", "2023/2024", "2024/2025"]
         return render(request, self.template_name, {
             "login_form": self.form_class(),
+            "senior_subject": senior_subjects,
+            "junior_subject": junior_subjects,
+            "users": users,
+            "sessions": sessions
         })
 
 
-class CreateSubjectView(CreateView):
-    login_url = 'login'
-    template_name = ""
-    form_class = SubjectForm
+# class CreateSubjectView(CreateView):
+#     login_url = 'login'
+#     template_name = ""
+#     form_class = SubjectForm
 
-    def post(self, request, *args, **kwargs):
-        subject_data = self.form_class(request.POST)
+#     def post(self, request, *args, **kwargs):
+#         subject_data = self.form_class(request.POST)
 
-        return
+#         return
 
 
 class EditClass(LoginRequiredMixin, UpdateView):
