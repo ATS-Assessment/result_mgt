@@ -31,15 +31,14 @@ class Klass(models.Model):
     )
     name = models.CharField(max_length=100)
     no_of_students = models.IntegerField()
-    subject = models.JSONField(default=_subject_json)
+    subject = models.JSONField(default=_subject_json())
     teacher = models.ForeignKey(
         "account.User", on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    password = models.CharField(max_length=50)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
     # token = models.CharField(max_length=30, default=generate_token)
-    previous_teachers = models.JSONField(default=_previous)
+    previous_teachers = models.JSONField(default=_previous())
 
     def __str__(self) -> str:
         return self.name

@@ -7,7 +7,7 @@ class ClassForm(forms.ModelForm):
 
     class Meta:
         model = Klass
-        fields = ('name', 'teacher', 'session',"password")
+        fields = ('name', 'teacher', 'session')
 
     def __init__(self, *args, **kwargs):
         super(ClassForm, self).__init__(*args, **kwargs)

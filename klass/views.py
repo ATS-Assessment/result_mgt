@@ -5,7 +5,7 @@ from django.views.generic import CreateView, UpdateView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
-from .models import Class
+from .models import Klass
 from .forms import ClassForm
 # from result.models import
 
@@ -33,10 +33,13 @@ def create_class(request):
         if class_form.is_valid():
             instance = class_form.save(commit=False)
             password = class_form.cleaned_data.get("password")
+    else:
+
+        return render(request, 'klass/add_class.html')
 
 
 class EditClass(LoginRequiredMixin, UpdateView):
-    model = Class
+    model = Klass
     form_class = ClassForm
     template_name = "class/edit.html"
 
@@ -51,14 +54,14 @@ def class_detail_admin_teacher(request):
 
     context = {}
     if request.user.is_superuser:
-        context["classes"] = Class.objects.select_related('teacher')
-        context["results"] = Result.object.all()
+        context["classes"] = Klass.objects.select_related('teacher')
+        # context["results"] = Result.object.all()
 
     return render(request, 'class-detail.html', context)
 
 
 def class_list(request):
     context = {
-        "classes": Class.objects.all()
+        "classes": Klass.objects.all()
     }
     return render(request, 'class-list.html', context)
