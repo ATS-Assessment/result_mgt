@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +42,16 @@ INSTALLED_APPS = [
     'account',
     'klass',
     'result',
-
+    # 'tailwind',
+    # 'theme',
+    # 'django_browser_reload',
 ]
+
+
+# TAILWIND_APP_NAME = 'theme'
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'result_mgt.urls'
@@ -82,8 +92,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'result_mgt',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
+        'USER': 'result_mgt_user',
+        'PASSWORD': 'adminadmin',
         'HOST': 'localhost',
         'PORT': '5432',
     }

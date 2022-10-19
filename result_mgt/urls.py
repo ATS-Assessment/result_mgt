@@ -18,8 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('result/', include('result.urls')),
-    path('', include('account.urls')),
-    path('class/', include('klass.urls'))
-
+    path('', include("account.urls")),
+    path('class/', include("klass.urls")),
+    # path("__reload__/", include("django_browser_reload.urls")),
 ]
