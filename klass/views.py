@@ -24,7 +24,7 @@ from account.models import User
 class ClassCreateView(LoginRequiredMixin, CreateView):
     model = Klass
     form_class = ClassForm
-    template_name = 'class/create.html'
+    template_name = 'klass/add_class.html'
 
     def post(self, request, *args, **kwargs):
         class_form = self.form_class(request.POST)
@@ -46,6 +46,17 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         return render(request, self.template_name, {
             "login_form": self.form_class(),
         })
+
+
+class CreateSubjectView(CreateView):
+    login_url = 'login'
+    template_name = ""
+    form_class = SubjectForm
+
+    def post(self, request, *args, **kwargs):
+        subject_data = self.form_class(request.POST)
+
+        return
 
 
 class EditClass(LoginRequiredMixin, UpdateView):
