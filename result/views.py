@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, ListView, DeleteView
+from django.views.generic import CreateView, UpdateView,\
+    ListView, DeleteView, DetailView
 
 from .models import Result, Token
 from .forms import CreateResultForm
@@ -22,29 +23,38 @@ class CreateResultView(CreateView):
         return reverse('index')
 
 
+class ResultDetailView(DetailView):
+    model = Result
+    template_name = 'result_detail.html'
+
+
+def delete_result_view(request, pk, *args, **kwargs):
+    pass
+
+
+
 class UpdateResultView(UpdateView):
     model = Result
     form_class = CreateResultForm
-    template_name = 'result_edit_delete.html'
+    template_name = 'result_edit.html'
 
     def get_success_url(self):
         return reverse('index')
 
 
-def delete_result_view(request, *args, **kwargs):
-    result = Result.objects.get_object_or_404(pk=kwargs['pk'])
-    if result.is_inactive:
-        result.is_inactive = False
-    else:
-        result.is_inactive = True
-    return render(request, 'result_edit_delete.html', {})
-
-
 class AllResultView(ListView):
     model = Result
     template_name = 'result_list.html'
+    context_object_name = 'results'
 
     def get_queryset(self):
         return Result.objects.all()
 
 
+class AllResultsByClass(ListView):
+    model = Result
+    template_name = 'result_list.html'
+    context_object_name = 'results_by_class'
+
+    def get_queryset(self):
+        pass

@@ -98,3 +98,4 @@ __pypackages__/
 /.idea/vcs.xml
 /templates/
 /result_mgt/settings.py
+/migrations/

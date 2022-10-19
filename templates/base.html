@@ -22,9 +22,8 @@
             {% block sidebar %}
                 <ul class="sidebar-nav">
                     <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="">All Results</a></li>
+                    <li><a href="{% url 'result_list' %}">All Results</a></li>
                     <li><a href="{% url 'result_create' %}">Create Result</a></li>
-{#                    <li><a href="{% url 'blog_create' %}">Create a new blog</a></li>#}
                     <li style="position: absolute; bottom: 30px;">User: {{ user.get_username }}</li>
 
                 </ul>
