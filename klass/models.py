@@ -1,9 +1,6 @@
-from django.db import models
 
-# Create your models here.
-
-from email.policy import default
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 import random
 import string
 
@@ -29,8 +26,9 @@ class Klass(models.Model):
         ("Third term", "Third term"),
     )
     name = models.CharField(max_length=100)
-    no_of_students = models.IntegerField()
-    subject = models.JSONField(default=_subject_json)
+    no_of_students = models.PositiveIntegerField(validators=[MinValueValidator(0),
+                                                             MaxValueValidator(40)])
+    # subject = models.JSONField(default=_subject_json)
     teacher = models.ForeignKey(
         "account.User", on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -38,13 +36,13 @@ class Klass(models.Model):
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
     # token = models.CharField(max_length=30, default=generate_token)
-    previous_teachers = models.JSONField(default=_previous)
+    # previous_teachers = models.JSONField(default=_previous)
 
     def __str__(self) -> str:
         return self.name
 
-    def get_year(self):
-        return self.year.year
+    # def get_year(self):
+    #     return self.year.year
 
 
 class Subject(models.Model):
