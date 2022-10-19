@@ -1,8 +1,9 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
-
 from django.db import models
+from django.shortcuts import redirect
 
 # Create your models here.
+
 SESSIONS = (
     ('2022/2023', '2022/2023'),
     ('2023/2024', '2023/2024'),
@@ -10,6 +11,18 @@ SESSIONS = (
     ('2025/2026', '2025/2026'),
     ('2026/2027', '2026/2027'),
 )
+
+
+class DeletedResultManager(models.Manager):
+
+    def get_queryset(self):
+        return Result.objects.filter(is_inactive=True)
+
+
+class ActiveResultManager(models.Manager):
+
+    def get_queryset(self):
+        return Result.objects.filter(is_inactive=False)
 
 
 class Result(models.Model):
@@ -33,6 +46,17 @@ class Result(models.Model):
     guardian_email = models.EmailField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+
+    deleted_results = DeletedResultManager()
+    active_results = ActiveResultManager()
+
+    def __str__(self):
+        return self.student_name + " - " + str(self.classes) + f"({self.session})"
+
+    def get_absolute_url(self):
+        return redirect('index')
 
 
 class Token(models.Model):
