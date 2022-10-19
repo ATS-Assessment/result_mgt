@@ -21,22 +21,22 @@ def _previous():
 
 class Klass(models.Model):
     SESSION_CHOICES = (
-        ("First term", "First term"),
-        ("Second term", "Second term"),
-        ("Third term", "Third term"),
+        ("2022/2023", "2022/2023"),
+        ("2023/2024", "2023/2024"),
+        ("2024/2025", "2024/2025"),
     )
     name = models.CharField(max_length=100)
     no_of_students = models.PositiveIntegerField(validators=[MinValueValidator(0),
                                                              MaxValueValidator(40)])
-    # subject = models.JSONField(default=_subject_json)
+    subject = models.JSONField(default=_subject_json())
     teacher = models.ForeignKey(
         "account.User", on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     password = models.CharField(max_length=50)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
-    # token = models.CharField(max_length=30, default=generate_token)
-    # previous_teachers = models.JSONField(default=_previous)
+
+    previous_teachers = models.JSONField(default=_previous())
 
     def __str__(self) -> str:
         return self.name

@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login
 
 
 from .models import Klass
-from .forms import ClassForm, ClassLoginForm
+from .forms import ClassForm, ClassLoginForm, SubjectForm
 from account.models import User
 # from result.models import
 
@@ -30,6 +30,7 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
             'class_form': class_form,
         }
         if class_form.is_valid():
+            # subject = class_form.cleaned_data['subject']
             instance = class_form.save()
             messages.success(
                 self.request, f"The Class {instance.name} was successfully created!")
@@ -46,10 +47,22 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         })
 
 
+class CreateSubjectView(CreateView):
+    login_url = 'login'
+    template_name = ""
+    form_class = SubjectForm
+
+    def post(self, request, *args, **kwargs):
+        subject_data = self.form_class(request.POST)
+
+
+
+
+
 class EditClass(LoginRequiredMixin, UpdateView):
     model = Klass
     form_class = ClassForm
-    template_name = "klass/edit_klass.html"
+    template_name = "klass/create_subject.html"
     login_url = 'login'
 
     def post(self, request, *args, **kwargs):
