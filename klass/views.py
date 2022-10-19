@@ -133,3 +133,17 @@ class ClassLogin(View):
         return render(request, self.template_name, {
             "login_form": self.form_class(),
         })
+
+
+def dashboard(request):
+
+    teachers = User.objects.all()
+    return render(request, 'klass/landing_page.html', {
+        "teachers": teachers})
+
+
+def dashboard(request):
+
+    teachers = User.objects.all()
+    return render(request, 'klass/landing_page.html', {
+        "teachers": teachers})
