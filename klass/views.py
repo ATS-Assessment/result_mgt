@@ -6,6 +6,7 @@ from django.views.generic import CreateView, UpdateView, DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.forms import formset_factory
 
 from result.models import Result
 
@@ -20,9 +21,6 @@ from account.models import User
 # from result.models import
 
 # Create your views here.
-
-
-# def create_class()
 
 
 class ClassCreateView(LoginRequiredMixin, CreateView):
@@ -65,9 +63,28 @@ class CreateSubjectView(CreateView):
     form_class = SubjectForm
 
     def post(self, request, *args, **kwargs):
-        subject_data = self.form_class(request.POST)
 
-        return
+        SubjectFormset = formset_factory(self.form_class, extra=5)
+        subject_formset = SubjectFormset(request.POST)
+
+        if subject_formset.is_valid():
+            data = [subject_formset.cleaned_data.items()]
+            subjects = Subject.objects.bulk_create(data)
+
+            return HttpResponseRedirect(reverse('class-detail', args=[]))
+        else:
+            return render(request, "klass/create_subject.html", {
+                "subject_formset": subject_formset,
+                "errors": subject_formset.errors,
+            })
+
+    def get(self, request, *args, **kwargs):
+        SubjectFormset = formset_factory(self.form_class, extra=5)
+        subject_formset = SubjectFormset()
+
+        return render(request, "klass/create_subject.html", {
+            "subject_formset": subject_formset,
+        })
 
 
 class EditClass(LoginRequiredMixin, UpdateView):
