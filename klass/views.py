@@ -2,26 +2,26 @@
 
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, DetailView, View
+from django.views.generic import CreateView, UpdateView, DetailView, View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+
+from django.forms import formset_factory
 
 from .models import Klass
-from .forms import ClassForm
+from .forms import ClassForm, SubjectForm
 
 from .models import Klass, Subject
 from .forms import ClassForm, ClassLoginForm
-from result.models import Result
+from result.models import Result, Score
+from result.forms import CreateResultForm, ScoreForm
 # SubjectForm
 
 from account.models import User
 # from result.models import
 
 # Create your views here.
-
-
-# def create_class()
 
 
 class ClassCreateView(LoginRequiredMixin, CreateView):
@@ -94,24 +94,52 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         })
 
 
-# class CreateSubjectView(CreateView):
-#     login_url = 'login'
-#     template_name = ""
-#     form_class = SubjectForm
+class CreateSubjectView(CreateView):
+    login_url = 'login'
+    template_name = ""
+    form_class = SubjectForm
 
-#     def post(self, request, *args, **kwargs):
-#         subject_data = self.form_class(request.POST)
+    def post(self, request, *args, **kwargs):
 
-#         return
+        SubjectFormset = formset_factory(self.form_class, extra=5)
+        subject_formset = SubjectFormset(request.POST)
+
+        if subject_formset.is_valid():
+            data = [subject_formset.cleaned_data.items()]
+            subjects = Subject.objects.bulk_create(data)
+
+            return HttpResponseRedirect(reverse('class-detail', args=[]))
+        else:
+            return render(request, "klass/create_subject.html", {
+                "subject_formset": subject_formset,
+                "errors": subject_formset.errors,
+            })
+
+    def get(self, request, *args, **kwargs):
+        SubjectFormset = formset_factory(self.form_class, extra=5)
+        subject_formset = SubjectFormset()
+
+        return render(request, "klass/create_subject.html", {
+            "subject_formset": subject_formset,
+        })
 
 
-class EditClass(LoginRequiredMixin, UpdateView):
+class ResultListView(ListView):
+    model = Result
+    template_name = 'klass/result_list.html'
+    context_object_name = 'results'
+
+    def get_queryset(self):
+        return Result.objects.filter(current_teacher__pk=self.request.user.pk)
+
+
+class EditClass(UpdateView):
     model = Klass
     form_class = ClassForm
     template_name = "klass/edit_klass.html"
     login_url = 'login'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, pk=None, *args, **kwargs):
         class_form = self.form_class(request.POST)
         if class_form.is_valid():
             instance = class_form.save()
@@ -125,11 +153,11 @@ class EditClass(LoginRequiredMixin, UpdateView):
                 "errors": class_form.errors
             })
 
-    def get(self, request, pk):
-
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
         return render(request, self.template_name, {
-            "login_form": self.form_class(),
-            "class": Klass.objects.get(pk=self.kwargs["pk"])
+            "edit_form": self.form_class(),
+            "class": Klass.objects.get(pk=pk)
         })
 
 
@@ -201,11 +229,61 @@ def class_detail(request, pk):
 
     context = {}
     # if request.user.is_superuser:
-    context["class"] = Klass.objects.select_related('teacher').get(pk=pk)
+    context["class"] = Klass.objects.get(pk=pk)
     # context["results"] = Result.object.all()
     print(context)
 
     return render(request, 'klass/admin_class_detail.html', context)
+
+
+def teacher_class_detail(request, pk):
+    context = {}
+
+    context["class"] = Klass.objects.get(pk=pk)
+    print(context)
+
+    return render(request, 'klass/klass_detail.html', context)
+
+
+# def test(request):
+#     ;
+
+class CreateResultView(CreateView):
+    model = Result
+    form_class = CreateResultForm
+    template_name = 'klass/result_create.html'
+
+    def post(self, request, *args, **kwargs):
+        result_form = self.form_class(request.POST)
+
+        print(request.POST)
+        # score_form = ScoreForm
+        # score_formset = formset_factory(
+        #     score_form)
+        # if result_form.is_valid() and score_formset.is_valid():
+        #     result = result.save()
+        #     while result:
+        #         for subj in result.classes_set.subjects:
+        #             for score_data in score_form.cleaned_data:
+        #                 score = Score.objects.create(**score_data)
+        #                 score.result = result
+        #                 score.save()
+
+        return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
+    def get(self, request, *args, **kwargs):
+        result_form = self.form_class()
+        score_form = ScoreForm()
+        print(request.user)
+        class_subjects = Klass.objects.filter(
+            teacher__pk=request.user.id).first()
+        print(class_subjects.subjects)
+
+        return render(request, self.template_name, {
+            "form": result_form,
+            "score_form": score_form,
+            "class_subjects": class_subjects.subjects
+        })
 
 
 class ClassLogin(View):
@@ -242,6 +320,12 @@ class ClassLogin(View):
         })
 
 
+class ClassLogout(View):
+    def post(self, request):
+        logout(request)
+        return HttpResponseRedirect('home')
+
+
 def dashboard(request):
 
     teachers = User.objects.all()
@@ -259,7 +343,13 @@ class AdminDashBoard(View):
             "result_count": Result.objects.all().count(),
         }
 
-        return render(request, "klass/admin_dashboard.html", context)
+        return render(request, "klass/klass_detail.html", context)
+
+
+def results(request):
+    results = Result.objects.filter(current_teacher__pk=request.user.pk)
+    return render(request, 'klass/result_detail.html', {
+        "results": results})
 
 
 class AdminClassListView(View):

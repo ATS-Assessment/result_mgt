@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.views import generic
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import reverse, redirect
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 
@@ -96,7 +97,7 @@ class UserLogin(generic.View):
     def get(self, request):
         return render(request, 'login.html')
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         if request.method == "POST":
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -110,12 +111,14 @@ class UserLogin(generic.View):
                 else:
                     klass = Klass.objects.filter(
                         teacher=request.user
-                    ).exist()
-                    if klass:
-                        return HttpResponseRedirect(
-                            reverse('class'))
+                    )
+                    if klass.exists():
+                        class_info = klass.first()
+
+                        print()
+                        return HttpResponseRedirect(reverse("teacher-class-detail"), kwargs={"pk": class_info.pk})
                     else:
-                        messages.error(
+                        messages.info(
                             request, 'Hi, you are yet to be assigned a class, if this seems to be an issue, please contact admin')
                         return HttpResponseRedirect(reverse('login'))
             else:
