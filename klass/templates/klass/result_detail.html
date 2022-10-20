@@ -1,5 +1,4 @@
- {% comment %} {% extends "klass/klass_detail.html" %} {% endcomment %}
-
+ {% extends "klass/klass_detail.html" %}
 
 <Html>
      <script src="https://cdn.tailwindcss.com"></script>
@@ -140,13 +139,7 @@
             Students
           </a>
 
-          {% comment %} <a href="{% url 'edit-class' class.pk %}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
-            <!-- Heroicon name: outline/folder -->
-            <svg class="flex-shrink-0 w-6 h-6 mr-3 text-gray-400 group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-            </svg>
-            Edit Class {{class.pk}}
-          </a> {% endcomment %}
+
 
            <a href="" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
             <!-- Heroicon name: outline/calendar -->
@@ -202,11 +195,11 @@
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-xl font-semibold text-gray-900">Users  {{results}}</h1>
-      <p class="mt-2 text-sm text-gray-700">A list of all the users in your account including their name, title, email and role.</p>
+      <h1 class="text-xl font-semibold text-gray-900">Results  {{results}}</h1>
+      <p class="mt-2 text-sm text-gray-700">A list of all the Results in your assigned Class including their Admission number,subjects etc.</p>
     </div>
     <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <button type="button" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">Add user</button>
+      <button type="button" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">Add new Result</button>
     </div>
   </div>
   <div class="flex flex-col mt-8">
@@ -229,7 +222,7 @@
               <!-- Odd row -->
               <tr>
                 <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">Lindsay Walton</td>
-                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">Front-end Developer</td>
+                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">Front-end Developer{{class}}</td>
                 <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">lindsay.walton@example.com</td>
                 <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">Member</td>
                 <td class="relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-6">
