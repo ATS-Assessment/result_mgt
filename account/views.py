@@ -1,19 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 
 from .forms import TeacherForm, UserLoginForm
 from django import forms
 
 
-from ..klass.models import Klass
-
-
-
+from klass.models import Klass
 
 User = get_user_model()
 
@@ -21,7 +19,7 @@ User = get_user_model()
 class Home(generic.TemplateView):
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'admin_page.html')
+        return render(request, 'account/index.html')
 
 
 class My_Class(generic.View):
@@ -67,35 +65,58 @@ class TeacherSuspendedView(generic.View):
 class UserLogin(generic.View):
 
     def post(self, request, *args, **kwargs):
-        if request.method == "POST":
-            username = request.POST.get('username')
-            password = request.POST.get('password')
+        username = request.POST['username']
+        password = request.POST['password']
 
-            user = authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password)
 
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    if user.is_superuser:
-                        return HttpResponseRedirect(reverse('home'))
-                    else:
-                        klass = Klass.objects.filter(
-                            teacher=request.user
-                        ).exist()
-                        if klass:
-                            return HttpResponseRedirect(
-                                reverse('class')
-                            )
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                if user.is_superuser:
+                    return HttpResponseRedirect(reverse('home'))
                 else:
-                    messages.error(request, 'You have not logged in')
-                    return HttpResponseRedirect(reverse('login'))
+                    klass = Klass.objects.filter(
+                        teacher=request.user
+                    ).exist()
+                    if klass:
+                        return HttpResponseRedirect(
+                            reverse('class')
+                        )
+                    return HttpResponseRedirect(
+                        reverse('create-class')
+                    )
             else:
-                return HttpResponse("Username or password is not correct ")
-        else:
-            return render(request, 'login.html')
+                messages.error(request, 'You have not logged in')
+                return HttpResponseRedirect(reverse('login'))
+        return render(request, 'login.html')
 
 
 class UserLogout(generic.View):
     def post(self, request):
         logout(request)
         return HttpResponseRedirect(reverse('home'))
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('blog-home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'account/register.html', {'form': form})
+
+
+class All_teachers(generic.View):
+    template_name = 'page.html'
+
+    def get(self, request, *args, **kwargs):
+        teachers = User.objects.all().exclude(role='admin')
+        context = {
+            'teachers': teachers
+        }
+        return render(request, self.template_name, context)
