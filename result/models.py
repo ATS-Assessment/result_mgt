@@ -38,6 +38,7 @@ class Result(models.Model):
     session = models.CharField(max_length=10, choices=SESSIONS)
     position = models.IntegerField()
     scores = models.ForeignKey('Score', on_delete=models.CASCADE, null=True)
+    subjects = models.ManyToManyField('klass.Subject', related_name='results')
     current_teacher = models.ForeignKey(
         'account.User', null=True, on_delete=models.CASCADE)
     minimum_subjects = models.IntegerField()

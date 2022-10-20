@@ -9,13 +9,12 @@ from django.contrib.auth import authenticate, login, logout
 
 from django.forms import formset_factory
 
-from result.models import Result
-
 from .models import Klass
 from .forms import ClassForm
 
 from .models import Klass, Subject
-from .forms import ClassForm, ClassLoginForm, SubjectForm
+from .forms import ClassForm, ClassLoginForm
+from result.models import Result
 # SubjectForm
 
 from account.models import User
@@ -29,22 +28,58 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
     form_class = ClassForm
     template_name = 'klass/add_class.html'
 
-    def post(self, request, *args, **kwargs):
-        print(request.POST)
-        class_form = self.form_class(request.POST)
+    def search_character(self, characters, request_body):
+        data = list(request_body.keys())
+        final_data = []
+        for char in data:
+            if char.startswith(characters) or char.endswith(characters):
+                final_data.append(char)
+        return final_data
 
-        if class_form.is_valid():
-            instance = class_form.save()
+    def find_subjects(self, args, request_body):
+        subjects = self.search_character(args, request_body)
+        found_subject = []
+        for data in subjects:
+            found_subject.append(request_body[data])
+        return found_subject
+
+    def post(self, request, *args, **kwargs):
+        class_name = request.POST.get('class_name', '')
+        class_size = request.POST.get('class_size', '')
+        educator = request.POST.get('teacher', '')
+        session = request.POST.get('session', '')
+        dict_object = request.POST.dict()
+        subjects = self.find_subjects('subject', dict_object)
+        request_body = {
+            "name": class_name,
+            "no_of_students": class_size,
+            "teacher": User.objects.get(full_name=educator),
+            "session": session,
+            "subjects": subjects
+        }
+
+        check_class = Klass.objects.filter(name=class_name)
+        if check_class:
+            messages.error(
+                request, f"A class with name {class_name} already exist")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+        check_teacher = Klass.objects.filter(teacher__full_name=educator)
+        if check_teacher:
+            messages.error(
+                request, f"{educator} has been assigned a class")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+        save_class = Klass(**request_body)
+        save_class.save()
+        if save_class:
             messages.success(
-                self.request, f"The Class {instance.name} was successfully created!")
-            return HttpResponseRedirect(reverse('class-detail'), args=[instance.pk])
+                self.request, f"{class_name} was successfully created!")
+            return HttpResponseRedirect(reverse('admin-class-list'))
         else:
             messages.error(
-                self.request, '')
-            return render(request, self.template_name, {"class_form": self.form_class(),
-                                                        "errors": class_form.errors})
+                request, 'Error creating class, check and try creating class again')
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         senior_subjects = Subject.objects.filter(level="SENIOR")
         junior_subjects = Subject.objects.filter(level="JUNIOR")
         users = User.objects.filter(is_superuser=False)
@@ -58,10 +93,11 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         })
 
 
-class CreateSubjectView(CreateView):
-    login_url = 'login'
-    template_name = ""
-    form_class = SubjectForm
+# class CreateSubjectView(CreateView):
+#     login_url = 'login'
+#     template_name = ""
+#     form_class = SubjectForm
+
 
     def post(self, request, *args, **kwargs):
 
@@ -124,14 +160,25 @@ class EditClass(UpdateView):
     #     })
 
 
+class EditClassAdminView(View):
+    template_name = "klass/edit_class_admin.html"
+
+    def get(self, request, pk):
+        return render(request, self.template_name, {
+            # "login_form": self.form_class(),
+            "class": Klass.objects.filter(pk=pk).first()
+        })
+
+
 def class_detail(request, pk):
 
     context = {}
     # if request.user.is_superuser:
     context["class"] = Klass.objects.get(pk=pk)
     # context["results"] = Result.object.all()
+    print(context)
 
-    return render(request, 'klass/klass_detail.html', context)
+    return render(request, 'klass/admin_class_detail.html', context)
 
 
 class ClassLogin(View):
@@ -181,19 +228,29 @@ def dashboard(request):
         "teachers": teachers})
 
 
-def admin_teacher_list(request):
-    context = {
-        "classes": Klass.objects.select_related('teacher').all(),
-        "classes": Klass.objects.all().count(),
-        "users": User.objects.filter(is_superuser=False).count(),
-        # "results": Result.objects.all(),
-        "result_count": Result.objects.all().count(),
-    }
+class AdminDashBoard(View):
+    def get(self, request):
+        context = {
+            "teachers": Klass.objects.select_related('teacher').all(),
+            "classes": Klass.objects.all().count(),
+            "users": User.objects.filter(is_superuser=False).count(),
+            # "results": Result.objects.all(),
+            "result_count": Result.objects.all().count(),
+        }
 
-    return render(request, "klass/admin_teacher_list.html", context)
+        return render(request, "klass/admin_teacher_list.html", context)
 
 
 def results(request, pk):
     results = Result.objects.filter(classes__pk=pk)
     return render(request, 'klass/result_detail.html', {
         "results": results})
+
+
+class AdminClassListView(View):
+    def get(self, request):
+        context = {
+            "classes": Klass.objects.select_related('teacher').all(),
+        }
+
+        return render(request, "klass/class_list.html", context)
