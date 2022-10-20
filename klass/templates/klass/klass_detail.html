@@ -1,4 +1,68 @@
-<Html>
+
+{% extends 'klass/base.html' %}
+{% load static %}
+{% block content %}
+  {% include 'messages.html' %}
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-16">
+    <div class="flex justify-between">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Class Information,   For Educator</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">class details containing name ,size and it's previos teacher</p>
+      </div>
+      <div class="m-4">
+        <a href="{% url 'edit-class' class.pk %}">
+        <button type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto">Edit Class</button>
+        </a>
+      </div>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+      <dl class="sm:divide-y sm:divide-gray-200">
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Class name</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.name }}</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Class size</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.no_of_students }} students</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Teacher</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.teacher.full_name }}</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Current session</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.session }}</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100">
+          <dt class="text-sm font-medium text-gray-500 font-bold">Subjects offerings</dt>
+
+          {% for subject in class.subjects %}
+            <div class="flex">
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-semibold">{{ forloop.counter }}. &nbsp;</dd>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-semibold">{{ subject }}</dd>
+            </div>
+          {% endfor %}
+        </div>
+
+      </dl>
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} <Html>
      <script src="https://cdn.tailwindcss.com"></script>
 
 <div>
@@ -137,21 +201,21 @@
             Students
           </a>
 
-          {% comment %} <a href="{% url 'edit-class' class.pk %}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
+          <a href="{% url 'edit-class' class.pk %}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
             <!-- Heroicon name: outline/folder -->
             <svg class="flex-shrink-0 w-6 h-6 mr-3 text-gray-400 group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
             Edit Class {{class.pk}}
-          </a> {% endcomment %}
+          </a>
 
-           {% comment %} <a href="{% url 'class-result' class.pk %}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
+          <a href="{% url 'class-result' class.pk %}" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
             <!-- Heroicon name: outline/calendar -->
             <svg class="flex-shrink-0 w-6 h-6 mr-3 text-gray-400 group-hover:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
              Result
-          </a> {% endcomment %}
+          </a>
 
           <a href="#" class="flex items-center px-2 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white group">
             <!-- Heroicon name: outline/inbox -->
@@ -215,7 +279,7 @@
                 {% comment %} <div class="border-gray-200 rounded-lg h-50">
                     {% include 'klass/result_detail.html' %}
                 </div> {% endcomment %}
-            </div>
+            {% comment %} </div>
           </div>
           <!-- /End replace -->
         </div>
@@ -226,7 +290,7 @@
  </div>
 
 </div>
-</Html>
+</Html> {% endcomment %}
 
 
 

@@ -1,9 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.shortcuts import redirect
-
 # Create your models here.
-
 SESSIONS = (
     ('2022/2023', '2022/2023'),
     ('2023/2024', '2023/2024'),
@@ -14,13 +12,11 @@ SESSIONS = (
 
 
 class DeletedResultManager(models.Manager):
-
     def get_queryset(self):
         return Result.objects.filter(is_inactive=True)
 
 
 class ActiveResultManager(models.Manager):
-
     def get_queryset(self):
         return Result.objects.filter(is_inactive=False)
 
@@ -34,11 +30,9 @@ class Result(models.Model):
     classes = models.ForeignKey('klass.Klass', on_delete=models.CASCADE)
     student_name = models.CharField(max_length=255)
     admission_number = models.CharField(max_length=255)
-    term = models.CharField(choices=TERM, max_length=255, null=True)
+    term = models.CharField(choices=TERM, max_length=12, null=True, blank=True)
     session = models.CharField(max_length=10, choices=SESSIONS)
     position = models.IntegerField()
-    scores = models.ForeignKey('Score', on_delete=models.CASCADE, null=True)
-    subjects = models.ManyToManyField('klass.Subject', related_name='results')
     current_teacher = models.ForeignKey(
         'account.User', null=True, on_delete=models.CASCADE)
     minimum_subjects = models.IntegerField()
@@ -48,15 +42,13 @@ class Result(models.Model):
     minimum_marks = models.IntegerField()
     marks_obtained = models.IntegerField()
     term_average = models.IntegerField()
-    comment = models.TextField(max_length=255, null=True, blank=True)
+    comment = models.CharField(max_length=255, null=True, blank=True)
     is_inactive = models.BooleanField(default=False)
     is_not_student = models.BooleanField(default=False)
     guardian_email = models.EmailField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-
     objects = models.Manager()
-
     deleted_results = DeletedResultManager()
     active_results = ActiveResultManager()
 
@@ -87,25 +79,27 @@ class Score(models.Model):
     #     ('E8', 'E8'),
     #     ('F9', 'F9')
     # )
-
     REMARKS = (
         ('excellent', 'Excellent'),
         ('very_good', 'Very Good'),
         ('good', 'Good'),
+        ('pass', 'Pass'),
         ('poor', 'Poor'),
         ('very_poor', 'Very Poor')
     )
-
+    result = models.ForeignKey(
+        Result, on_delete=models.CASCADE, null=True, blank=True)
+    subject_name = models.CharField(max_length=50, null=True, blank=True)
     test_one = models.IntegerField(validators=[MaxValueValidator(10)])
     test_two = models.IntegerField(validators=[MaxValueValidator(10)])
     quiz = models.IntegerField(validators=[MaxValueValidator(5)])
     assignment = models.IntegerField(validators=[MaxValueValidator(5)])
     exam = models.IntegerField(validators=[MaxValueValidator(70)])
     # grade = models.CharField(choices=GRADES, null=True, blank=True)
+    total = models.IntegerField(validators=[MaxValueValidator(100)], null=True)
     highest_in_class = models.IntegerField()
     lowest_in_class = models.IntegerField()
-    remarks = models.CharField(
-        choices=REMARKS, max_length=255, null=True, blank=True)
+    # remarks = models.CharField(choices=REMARKS, null=True, blank=True)
 
     @property
     def total_mark(self):
@@ -133,5 +127,25 @@ class Score(models.Model):
         if 0 <= self.total_mark <= 39:
             return 'F9'
 
-    # class Meta:
-    #     ordering = ['-total_mark']
+    @property
+    def remarks(self):
+        if self.total_mark >= 80:
+            return 'Excellent'
+        if 70 <= self.total_mark <= 79:
+            return 'Very Good'
+        if 60 <= self.total_mark <= 69:
+            return 'Good'
+        if 50 <= self.total_mark <= 59:
+            return 'Pass'
+        if 40 <= self.total_mark <= 49:
+            return 'Poor'
+        if self.total_mark <= 39:
+            return 'Very Poor'
+
+    def save(self):
+        self.total = self.total_mark
+
+        return super().save()
+
+    def __str__(self):
+        return f"{self.subject_name} - {self.grade} - {self.total_mark} - {self.remarks}"

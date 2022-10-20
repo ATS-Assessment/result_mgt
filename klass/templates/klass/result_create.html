@@ -4,8 +4,9 @@
 
     {% block content %}
 
-<div class="ml-72 mt-9">
-<form class="space-y-8 divide-y divide-gray-200" action="{% url 'result_create'  %}">
+<div class="ml-35 mt-9">
+<form class="space-y-8 divide-y divide-gray-200"  method="POST" action="{%  url 'create-result' %}">
+  {% csrf_token %}
     <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
       <div>
         <h3 class="text-lg leading-6 font-medium text-gray-900">Generate Result </h3>
@@ -36,16 +37,7 @@
           </div>
         </div>
 
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label for="country" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Country </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <select id="country" name="country" autocomplete="country-name" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
-              <option>United States</option>
-              <option>Canada</option>
-              <option>Mexico</option>
-            </select>
-          </div>
-        </div>
+
 
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="street-address" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Term </label>
@@ -70,7 +62,36 @@
 
           </div>
         </div>
+             <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <span for="region" class="block text-xl font-semibold text-gray-700 sm:mt-px sm:pt-2"> Subject Scores </span>
+        {% comment %} <p class="mt-1 max-w-2xl text-sm text-gray-500">Subject list with their score</p> {% endcomment %}
+        </div>
 
+        {% for subject in class_subjects %}
+         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> {{ subject}}</label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            <div class="grid grid-cols-3 gap-2">
+
+              <input class="border-b-2 border-black" placeholder="first test" name={{subject|add:"-test-one"}}/>
+              <input class="border-b-2 border-black"  placeholder="second test" name={{subject|add:"-test-two"}}/>
+              <input class="border-b-2 border-black" placeholder="quiz" name={{subject|add:"-quiz"}}/>
+              <input class="border-b-2 border-black"  placeholder="assignment" name={{subject|add:"-assignment"}}/>
+              <input class="border-b-2 border-black"  placeholder="exam" name={{subject|add:"-exam"}}/>
+              {% comment %} <input class="border-b-2 border-black" name={{subject|add:"-test-on"}}/>
+              <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/>
+              <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/> {% endcomment %}
+
+</div>
+          </div>
+        </div>
+        {%endfor %}
+
+
+            <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <span for="region" class="block text-xl font-semibold text-gray-700 sm:mt-px sm:pt-2"> Additional Result Information</span>
+
+        </div>
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Minimum Subject </label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
@@ -166,7 +187,7 @@
   <div class="pt-5">
     <div class="flex justify-end">
       <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
-      <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+      <button class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
     </div>
   </div>
 </form>

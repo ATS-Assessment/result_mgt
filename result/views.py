@@ -14,13 +14,13 @@ def index(request):
     return render(request, 'index.html', {})
 
 
-class CreateResultView(CreateView):
-    model = Result
-    form_class = CreateResultForm
-    template_name = 'result_create.html'
+# class CreateResultView(CreateView):
+#     model = Result
+#     form_class = CreateResultForm
+#     template_name = 'result_create.html'
 
-    def get_success_url(self):
-        return reverse('index')
+#     def get_success_url(self):
+#         return reverse('index')
 
 
 class ResultDetailView(DetailView):

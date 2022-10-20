@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, DetailView, View
+from django.views.generic import CreateView, UpdateView, DetailView, View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -10,11 +10,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.forms import formset_factory
 
 from .models import Klass
-from .forms import ClassForm
+from .forms import ClassForm, SubjectForm
 
 from .models import Klass, Subject
 from .forms import ClassForm, ClassLoginForm
-from result.models import Result
+from result.models import Result, Score
+from result.forms import CreateResultForm, ScoreForm
 # SubjectForm
 
 from account.models import User
@@ -93,11 +94,10 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         })
 
 
-# class CreateSubjectView(CreateView):
-#     login_url = 'login'
-#     template_name = ""
-#     form_class = SubjectForm
-
+class CreateSubjectView(CreateView):
+    login_url = 'login'
+    template_name = ""
+    form_class = SubjectForm
 
     def post(self, request, *args, **kwargs):
 
@@ -124,12 +124,13 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         })
 
 
-def edit_class(request, pk):
+class ResultListView(ListView):
+    model = Result
+    template_name = 'klass/result_list.html'
+    context_object_name = 'results'
 
-    return render(request, "klass/edit_klass.html", {
-        "edit_form": ClassForm(),
-        "class": Klass.objects.get(pk=pk)
-    })
+    def get_queryset(self):
+        return Result.objects.filter(current_teacher__pk=self.request.user.pk)
 
 
 class EditClass(UpdateView):
@@ -138,26 +139,26 @@ class EditClass(UpdateView):
     template_name = "klass/edit_klass.html"
     login_url = 'login'
 
-    # def post(self, request, pk=None, *args, **kwargs):
-    #     class_form = self.form_class(request.POST)
-    #     if class_form.is_valid():
-    #         instance = class_form.save()
-    #         messages.success(
-    #             self.request, f"The Class {instance.name} was successfully updated!")
-    #         return HttpResponseRedirect(reverse('class-detail'), args=[instance.pk])
-    #     else:
-    #         messages.error(request, "Invalid Input")
-    #         return render(request, self.template_name, {
-    #             'class_form': self.form_class(),
-    #             "errors": class_form.errors
-    #         })
+    def post(self, request, pk=None, *args, **kwargs):
+        class_form = self.form_class(request.POST)
+        if class_form.is_valid():
+            instance = class_form.save()
+            messages.success(
+                self.request, f"The Class {instance.name} was successfully updated!")
+            return HttpResponseRedirect(reverse('class-detail'), args=[instance.pk])
+        else:
+            messages.error(request, "Invalid Input")
+            return render(request, self.template_name, {
+                'class_form': self.form_class(),
+                "errors": class_form.errors
+            })
 
-    # def get(self, request, *args, **kwargs):
-    #     pk = self.kwargs.get("pk")
-    #     return render(request, self.template_name, {
-    #         "edit_form": self.form_class(),
-    #         "class": Klass.objects.get(pk=pk)
-    #     })
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        return render(request, self.template_name, {
+            "edit_form": self.form_class(),
+            "class": Klass.objects.get(pk=pk)
+        })
 
 
 class EditClassAdminView(View):
@@ -179,6 +180,56 @@ def class_detail(request, pk):
     print(context)
 
     return render(request, 'klass/admin_class_detail.html', context)
+
+
+def teacher_class_detail(request, pk):
+    context = {}
+
+    context["class"] = Klass.objects.get(pk=pk)
+    print(context)
+
+    return render(request, 'klass/klass_detail.html', context)
+
+
+# def test(request):
+#     ;
+
+class CreateResultView(CreateView):
+    model = Result
+    form_class = CreateResultForm
+    template_name = 'klass/result_create.html'
+
+    def post(self, request, *args, **kwargs):
+        result_form = self.form_class(request.POST)
+
+        print(request.POST)
+        # score_form = ScoreForm
+        # score_formset = formset_factory(
+        #     score_form)
+        # if result_form.is_valid() and score_formset.is_valid():
+        #     result = result.save()
+        #     while result:
+        #         for subj in result.classes_set.subjects:
+        #             for score_data in score_form.cleaned_data:
+        #                 score = Score.objects.create(**score_data)
+        #                 score.result = result
+        #                 score.save()
+
+        return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
+    def get(self, request, *args, **kwargs):
+        result_form = self.form_class()
+        score_form = ScoreForm()
+        print(request.user)
+        class_subjects = Klass.objects.filter(
+            teacher__pk=request.user.id).first()
+        print(class_subjects.subjects)
+
+        return render(request, self.template_name, {
+            "form": result_form,
+            "score_form": score_form,
+            "class_subjects": class_subjects.subjects
+        })
 
 
 class ClassLogin(View):
@@ -238,11 +289,11 @@ class AdminDashBoard(View):
             "result_count": Result.objects.all().count(),
         }
 
-        return render(request, "klass/admin_teacher_list.html", context)
+        return render(request, "klass/klass_detail.html", context)
 
 
-def results(request, pk):
-    results = Result.objects.filter(classes__pk=pk)
+def results(request):
+    results = Result.objects.filter(current_teacher__pk=request.user.pk)
     return render(request, 'klass/result_detail.html', {
         "results": results})
 

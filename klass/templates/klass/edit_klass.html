@@ -1,8 +1,8 @@
-{% extends "klass/klass_detail.html" %}
+{% extends "klass/base.html" %}
 
 
 {% block content %}
-    <div class="ml-72 mt-9">
+    <div class="ml-38 mt-9">
     <form class="space-y-8 divide-y divide-gray-200" action="{% url 'edit-class' class.pk %}">
       <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
       <div>
@@ -18,10 +18,26 @@
           </div>
         </div>
 
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+        {% comment %} <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="last-name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Teacher Assigned </label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
             {{edit_form.teacher}}
+            {% comment %} <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"> {% endcomment %}
+          {% comment %} </div>
+        </div>  {% endcomment %}
+
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="last-name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> No. of Students </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{edit_form.no_of_students}}
+            {% comment %} <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"> {% endcomment %}
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="last-name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Subjects </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{edit_form.subjects}}
             {% comment %} <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"> {% endcomment %}
           </div>
         </div>
