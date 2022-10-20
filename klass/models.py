@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
 import random
 import string
 # Create your models here.
@@ -32,6 +33,10 @@ class Klass(models.Model):
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
     previous_teachers = models.JSONField(default=_previous())
+
+    def get_absolute_url(self):
+        return reverse("", kwargs={"pk": self.pk})
+
 
     def __str__(self) -> str:
         return self.name

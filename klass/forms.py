@@ -12,9 +12,9 @@ class ClassForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ClassForm, self).__init__(*args, **kwargs)
 
-        self.fields["name"].widget.attrs["class"] = "mt-1 focus: ring-cyan-500 focus: border-cyan-500 block w-full shadow-sm sm: text-sm border-gray-300 rounded-md"
-        # self.fields["teacher"].widget.attrs["class"] = "mt-1 focus: ring-cyan-500 focus: border-cyan-500 block w-full shadow-sm sm: text-sm border-gray-300 rounded-md"
-        self.fields["session"].widget.attrs["class"] = "mt-1 focus: ring-cyan-500 focus: border-cyan-500 block w-full shadow-sm sm: text-sm border-gray-300 rounded-md"
+        self.fields["name"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+        self.fields["teacher"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md"
+        self.fields["session"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md"
 
 
 class ClassLoginForm(forms.Form):
