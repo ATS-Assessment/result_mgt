@@ -19,7 +19,8 @@ class Result(models.Model):
     session = models.CharField(max_length=10, choices=SESSIONS)
     position = models.IntegerField()
     subjects = models.ManyToManyField('klass.Subject', related_name='results')
-    current_teacher = models.ForeignKey('account.User', null=True, on_delete=models.CASCADE)
+    current_teacher = models.ForeignKey(
+        'account.User', null=True, on_delete=models.CASCADE)
     minimum_subjects = models.IntegerField()
     number_of_subjects_taken = models.IntegerField()
     number_of_passes = models.IntegerField()
@@ -36,6 +37,8 @@ class Result(models.Model):
 
 
 class Token(models.Model):
-    count = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
-    result = models.ForeignKey(Result, on_delete=models.CASCADE, null=True, blank=True)
+    count = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)])
+    result = models.ForeignKey(
+        Result, on_delete=models.CASCADE, null=True, blank=True)
     token = models.CharField(max_length=10)
