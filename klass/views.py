@@ -136,10 +136,64 @@ class EditClass(LoginRequiredMixin, UpdateView):
 class EditClassAdminView(View):
     template_name = "klass/edit_class_admin.html"
 
+    def search_character(self, characters, request_body):
+        data = list(request_body.keys())
+        final_data = []
+        for char in data:
+            if char.startswith(characters) or char.endswith(characters):
+                final_data.append(char)
+        return final_data
+
+    def find_subjects(self, args, request_body):
+        subjects = self.search_character(args, request_body)
+        found_subject = []
+        for data in subjects:
+            found_subject.append(request_body[data])
+        return found_subject
+
+    def post(self, request, pk):
+        class_name = request.POST.get('class_name', '')
+        class_size = request.POST.get('class_size', '')
+        educator = request.POST.get('teacher', '')
+        session = request.POST.get('session', '')
+        dict_object = request.POST.dict()
+        subjects = self.find_subjects('subject', dict_object)
+        class_instance = Klass.objects.get(pk=pk)
+        class_instance.name = class_name
+        class_instance.no_of_students = class_size
+        class_instance.teacher = User.objects.get(full_name=educator)
+        class_instance.session = session
+        class_instance.subjects = subjects
+
+        klass = Klass.objects.get(pk=pk)
+
+        if klass.teacher.full_name != educator:
+            teacher_dict = {
+                'name': klass.teacher.full_name,
+                'session': klass.session
+            }
+
+            class_instance.previous_teachers = teacher_dict
+
+        check_teacher = Klass.objects.filter(teacher__full_name=educator)
+        if check_teacher:
+            messages.error(
+                request, f"{educator} has been assigned a class")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
+        class_instance.save()
+
+        return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
     def get(self, request, pk):
+
         return render(request, self.template_name, {
             # "login_form": self.form_class(),
-            "class": Klass.objects.filter(pk=pk).first()
+            "class": Klass.objects.filter(pk=pk).first(),
+            "users": User.objects.filter(is_superuser=False),
+            "sessions": ["2022/2023", "2023/2024", "2024/2025"],
+            "senior_subjects": Subject.objects.filter(level="SENIOR"),
+            "junior_subjects": Subject.objects.filter(level="JUNIOR")
         })
 
 

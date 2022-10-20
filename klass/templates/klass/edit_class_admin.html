@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 {% include 'messages.html' %}
-  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'create-class' %}" method="POST">
+  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'edit-class-admin' class.pk %}" method="POST">
     {% csrf_token %}
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
@@ -34,9 +34,10 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    {% for subject in junior_subject %}
+                    {% for subject in junior_subjects %}
                       <div class="flex items-center">
-                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
+                        {% if subject in class.subjects %} 'checked' {% endif %} 
+                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   {% if subject.name in class.subjects %} checked {% else %} '' {% endif %}  class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
                         <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
                       </div>
                     {% endfor %}
@@ -49,9 +50,9 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    {% for subject in senior_subject %}
+                    {% for subject in senior_subjects %}
                       <div class="flex items-center">
-                        <input id="subject" name={{ subject.name|add:"-subject" }} type="radio" value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
+                        <input id="subject" name={{ subject.name|add:"-subject" }} {% if subject in class.subjects %} checked {% endif %}  type="radio" value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
                         <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
                       </div>
                     {% endfor %}
@@ -66,7 +67,7 @@
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <select id="teacher" name="teacher" autocomplete="country-name" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
                 {% for user in users %}
-                  <option>{{ user.full_name }}</option>
+                  <option >{{ user.full_name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -77,7 +78,7 @@
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <select id="session" name="session" autocomplete="session" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
                 {% for session in sessions %}
-                <option>{{ session }}</option>
+                <option >{{ session }}</option>
               {% endfor %}
               </select>
             </div>
