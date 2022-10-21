@@ -1,5 +1,5 @@
  {% extends "klass/base.html" %}
-
+ {% load static %}
 
  <div class="mt-auto ml-12">
 
@@ -12,7 +12,7 @@
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-xl font-semibold text-gray-900">Results  {{results}}</h1>
+      <h1 class="text-xl font-semibold text-gray-900">All Students Results </h1>
       <p class="mt-2 text-sm text-gray-700">A list of all the Results in your assigned Class including their Admission number,subjects etc.</p>
     </div>
     <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
@@ -28,8 +28,8 @@
               <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Admission Number</th>
                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Class</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Role</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Term</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Session</th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                   <span class="sr-only">Edit</span>
                 </th>
@@ -38,18 +38,18 @@
 
             <tbody class="bg-white">
               {% for result in results %}
-              {% endfor %}
+
               <!-- Odd row -->
               <tr>
-                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">Lindsay Walton</td>
-                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">Front-end Developer{{class}}</td>
-                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">lindsay.walton@example.com</td>
-                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">Member</td>
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{result.admission_number}}</td>
+                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{result.classes}}{{class}}</td>
+                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{result.term}}</td>
+                <td class="px-3 py-4 text-sm text-gray-500 whitespace-nowrap">{{result.session}}</td>
                 <td class="relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-6">
-                  <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit<span class="sr-only"></span></a><a href="#" class="text-red-700 m-10 hover:text-red-900">Delete<span class="sr-only"></span></a>
+                  <a href="{% url "result-detail" result.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">View</a><a href="{% url "delete-result" result.pk %}" class="text-red-700 m-10 hover:text-red-900">Delete</a>
                 </td>
               </tr>
-
+ {% endfor %}
               <!-- More people... -->
             </tbody>
           </table>

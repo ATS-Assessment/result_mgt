@@ -15,15 +15,17 @@ urlpatterns = [
     path('results/', views.ResultListView.as_view(), name='result-list'),
     path('<int:pk>/edit/', views.EditClass.as_view(), name="edit-class"),
     path('create-subject/', views.CreateSubjectView.as_view(), name="create-subject"),
-    path('dashboard/', views.dashboard, name="dashboard"),
-    path('<int:pk>/result/', views.results, name="class-result"),
+    # path('dashboard/', views.dashboard, name="dashboard"),
+    path('dasboard/', views.EducatorDashBoard.as_view(), name="dashboard"),
+    path('result/<int:pk>/', views.result_detail, name="result-detail"),
+    path('result/<int:pk>/edit/', views.EditResult.as_view(), name="edit-result"),
+    path('result/<int:pk>/delete/',
+         views.toggle_delete_result, name="delete-result"),
     # path('admin-list/', views.admin_teacher_list, name="admin-teacher-list"),
     path('detail/<int:pk>/', views.class_detail, name="class-detail"),
-    path('edit/<int:pk>/', views.EditClass.as_view(), name="edit-class"),
-    path('edit/<int:pk>/admin', views.EditClassAdminView.as_view(),
+    # path('edit/<int:pk>/', views.EditClass.as_view(), name="edit-class"),
+    path('edit/<int:pk>/admin/', views.EditClassAdminView.as_view(),
          name="edit-class-admin"),
-    path('dashboard/', views.dashboard, name="dashboard"),
-
 ]
 
 urlpatterns += [

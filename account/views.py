@@ -115,8 +115,8 @@ class UserLogin(generic.View):
                     if klass.exists():
                         class_info = klass.first()
 
-                        print()
-                        return HttpResponseRedirect(reverse("teacher-class-detail"), kwargs={"pk": class_info.pk})
+
+                        return HttpResponseRedirect(reverse("teacher-class-detail", args=[class_info.pk]))
                     else:
                         messages.info(
                             request, 'Hi, you are yet to be assigned a class, if this seems to be an issue, please contact admin')

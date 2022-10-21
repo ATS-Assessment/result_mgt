@@ -12,10 +12,10 @@ class ClassForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ClassForm, self).__init__(*args, **kwargs)
 
-        self.fields["name"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-        self.fields["no_of_students"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md"
-        self.fields["session"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md"
-        self.fields["subjects"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md"
+        self.fields["name"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md border-b-2"
+        self.fields["no_of_students"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md border-b-2"
+        self.fields["session"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md border-b-2"
+        self.fields["subjects"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-300 rounded-md border-b-2"
 
 
 class ClassLoginForm(forms.Form):

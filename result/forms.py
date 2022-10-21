@@ -26,6 +26,7 @@ class CreateResultForm(forms.ModelForm):
         self.fields["comment"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         self.fields["term_average"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         self.fields["number_of_passes"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
+        self.fields["minimum_marks"].widget.attrs["class"] = "rounded-md block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         self.fields["admission_number"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         self.fields["position"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         # self.fields["scores"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 rounded-md"

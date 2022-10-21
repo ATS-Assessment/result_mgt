@@ -1,16 +1,18 @@
-{% extends 'klass/base.html' %}
+{% extends "klass/base.html" %}
+
+
  {% load static %}
- <div class=" mt-auto ml-26">
+ <div class=" mt-auto bg-slate-600 ml-26">
 
     {% block content %}
 
 <div class="ml-35 mt-9">
-<form class="space-y-8 divide-y divide-gray-200"  method="POST" action="{%  url 'create-result' %}">
+<form class="space-y-8 divide-y divide-gray-200"  method="POST" action="{%  url 'edit-result' result.pk %}">
   {% csrf_token %}
     <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
       <div>
-        <h3 class="text-lg leading-6 font-medium text-gray-900">Generate Result </h3>
-        <p class="mt-1 max-w-2xl text-sm text-gray-500">Guardians/Parents can also  receive this result  as a mail.</p>
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Edit Result </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">NB: Guardians/Parents can also  receive this result  as a mail.</p>
       </div>
       <div class="space-y-6 sm:space-y-5">
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -70,41 +72,46 @@
         {% for subject in class_subjects %}
          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> {{ subject}}</label>
-              <div class="mt-1 sm:mt-0 sm:col-span-2">
-                <div class="grid grid-cols-3 gap-2">
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            <div class="grid grid-cols-3 gap-2">
 
-                  <input class="border-b-2 border-black" placeholder="first test" name={{subject|add:"-test-one"}}/>
-                  <input class="border-b-2 border-black"  placeholder="second test" name={{subject|add:"-test-two"}}/>
-                  <input class="border-b-2 border-black" placeholder="quiz" name={{subject|add:"-quiz"}}/>
-                  <input class="border-b-2 border-black"  placeholder="assignment" name={{subject|add:"-assignment"}}/>
-                  <input class="border-b-2 border-black"  placeholder="exam" name={{subject|add:"-exam"}}/>
-                </div>
-              </div>
+              <input class="border-b-2 border-black" placeholder="first test" name={{subject|add:"-test-one"}}/>
+              <input class="border-b-2 border-black"  placeholder="second test" name={{subject|add:"-test-two"}}/>
+              <input class="border-b-2 border-black" placeholder="quiz" name={{subject|add:"-quiz"}}/>
+              <input class="border-b-2 border-black"  placeholder="assignment" name={{subject|add:"-assignment"}}/>
+              <input class="border-b-2 border-black"  placeholder="exam" name={{subject|add:"-exam"}}/>
+              {% comment %} <input class="border-b-2 border-black" name={{subject|add:"-test-on"}}/>
+              <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/>
+              <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/> {% endcomment %}
+
+</div>
+          </div>
         </div>
         {%endfor %}
 
 
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <span for="region" class="block text-xl font-semibold text-gray-700 sm:mt-px sm:pt-2"> Additional Result Information</span>
+
         </div>
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Minimum Subject </label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
             {{form.minimum_subjects}}
+
           </div>
         </div>
-
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> No. of Subjects Taken</label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
-            {{form.number_of_subjects_taken}}
+            {{form.no_of_subjects_taken}}
 
           </div>
         </div>
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> No. of Passed Subjects </label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
-            {{form.number_of_passes}}
+            {{form.no_of_passes}}
 
           </div>
         </div>
