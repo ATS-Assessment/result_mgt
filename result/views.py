@@ -35,10 +35,11 @@ def delete_result_view(request, pk, *args, **kwargs):
 class UpdateResultView(UpdateView):
     model = Result
     form_class = CreateResultForm
-    template_name = 'result_edit.html'
 
     def get_success_url(self):
         return reverse('index')
+    template_name = 'result_create.html'
+    success_url = 'dashboard'
 
 
 class AllResultView(ListView):

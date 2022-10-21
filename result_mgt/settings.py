@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'klass',
-    'result',
+    'result'
     # 'tailwind',
     # 'theme',
     # 'django_browser_reload',
@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'result_mgt',
         'USER': 'result_mgt_user',
         'PASSWORD': 'adminadmin',

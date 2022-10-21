@@ -30,11 +30,9 @@ class Klass(models.Model):
         "account.User", on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
-    previous_teachers = models.JSONField(
-        default=_previous(), null=True, blank=True)
-
-    def get_absolute_url(self):
-        return reverse("", kwargs={"pk": self.pk})
+    year = models.DateTimeField(null=True,)
+    previous_teachers = models.JSONField(default=_previous(),
+                                         null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

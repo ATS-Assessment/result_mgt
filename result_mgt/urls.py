@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.urls import include, path
 from django.contrib import admin
-from django.conf.urls import ( handler404, handler403, handler500)
+from django.conf.urls import (handler404, handler403, handler500)
 
 handler500 = "klass.views.page_500"
 handler403 = "klass.views.page_403"

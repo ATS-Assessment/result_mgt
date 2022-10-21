@@ -1,4 +1,10 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib.auth import views as auth_views
+
+
+from .views import UserLogin, UserLogout, Home
+from .pdf_generator import result_view
+
 
 from .views import RegisterView, UserLogin, UserLogout, Home, landing_page
 
