@@ -31,7 +31,8 @@ class Klass(models.Model):
     password = models.CharField(max_length=50)
     session = models.CharField(choices=SESSION_CHOICES, max_length=100)
     year = models.DateTimeField()
-    previous_teachers = models.JSONField(default=_previous())
+    previous_teachers = models.JSONField(default=_previous(),
+                                         null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

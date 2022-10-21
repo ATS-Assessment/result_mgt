@@ -15,6 +15,7 @@ class CreateResultView(CreateView):
     model = Result
     form_class = CreateResultForm
     template_name = 'result_create.html'
+    success_url = 'dashboard'
 
 
 

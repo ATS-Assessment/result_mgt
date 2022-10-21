@@ -22,7 +22,7 @@ class User(AbstractUser):
         return User.objects.all().exclude(role='admin')
 
     def __str__(self):
-        return f"Teacher"
+        return self.full_name
 
     USERNAME_FIELD: str = 'email'
     REQUIRED_FIELDS = ['full_name']
