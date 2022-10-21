@@ -16,6 +16,7 @@ class CreateResultForm(forms.ModelForm):
         self.fields["current_teacher"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-700 border-b-2 "
         self.fields["term"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-700  border-b-2 "
         self.fields["session"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-700 border-b-2 "
+        # self.fields["position"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-indigo-500 focus: border-indigo-500 sm: text-sm border-gray-700 border-b-2 "
         self.fields["student_name"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         self.fields["guardian_email"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "
         self.fields["term"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-700 border-b-2 "

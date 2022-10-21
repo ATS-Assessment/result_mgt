@@ -107,16 +107,14 @@ class UserLogin(generic.View):
             if user is not None:
                 login(request, user)
                 if user.is_superuser:
-                    return HttpResponseRedirect(reverse('create-class'))
+                    return HttpResponseRedirect(reverse('admin-dashboard'))
                 else:
                     klass = Klass.objects.filter(
                         teacher=request.user
                     )
                     if klass.exists():
                         class_info = klass.first()
-
-                        print()
-                        return HttpResponseRedirect(reverse("teacher-class-detail"), kwargs={"pk": class_info.pk})
+                        return HttpResponseRedirect(reverse("teacher-class-detail"))
                     else:
                         messages.info(
                             request, 'Hi, you are yet to be assigned a class, if this seems to be an issue, please contact admin')
@@ -130,9 +128,9 @@ class UserLogin(generic.View):
 
 
 class UserLogout(generic.View):
-    def post(self, request):
+    def get(self, request):
         logout(request)
-        return HttpResponseRedirect(reverse('home'))
+        return HttpResponseRedirect(reverse('login'))
 
 
 def landing_page(request):

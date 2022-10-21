@@ -44,7 +44,7 @@ class Result(models.Model):
     term_average = models.IntegerField()
     comment = models.CharField(max_length=255, null=True, blank=True)
     is_inactive = models.BooleanField(default=False)
-    is_not_student = models.BooleanField(default=False)
+    # is_not_student = models.BooleanField(default=False)
     guardian_email = models.EmailField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -95,19 +95,20 @@ class Score(models.Model):
     quiz = models.IntegerField(validators=[MaxValueValidator(5)])
     assignment = models.IntegerField(validators=[MaxValueValidator(5)])
     exam = models.IntegerField(validators=[MaxValueValidator(70)])
-    # grade = models.CharField(choices=GRADES, null=True, blank=True)
-    total = models.IntegerField(validators=[MaxValueValidator(100)], null=True)
-    highest_in_class = models.IntegerField()
-    lowest_in_class = models.IntegerField()
-    # remarks = models.CharField(choices=REMARKS, null=True, blank=True)
+    grade = models.CharField(max_length=50, null=True, blank=True)
+    total = models.IntegerField(validators=[
+        MaxValueValidator(100)], null=True)
+    # highest_in_class = models.IntegerField()
+    # lowest_in_class = models.IntegerField()
+    remarks = models.CharField(max_length=50, null=True, blank=True)
 
     @property
     def total_mark(self):
-        return self.test_one + self.test_two +\
-            self.quiz + self.assignment + self.exam
+        return int(self.test_one) + int(self.test_two) +\
+            int(self.quiz) + int(self.assignment) + int(self.exam)
 
     @property
-    def grade(self):
+    def result_grade(self):
         if self.total_mark >= 75:
             return 'A1'
         if 70 <= self.total_mark <= 74:
@@ -128,7 +129,7 @@ class Score(models.Model):
             return 'F9'
 
     @property
-    def remarks(self):
+    def result_remarks(self):
         if self.total_mark >= 80:
             return 'Excellent'
         if 70 <= self.total_mark <= 79:
@@ -144,6 +145,8 @@ class Score(models.Model):
 
     def save(self):
         self.total = self.total_mark
+        self.grade = self.result_grade
+        self.remarks = self.result_remarks
 
         return super().save()
 

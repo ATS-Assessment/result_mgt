@@ -88,12 +88,13 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'result_mgt',
-        'USER': 'result_mgt_user',
-        'PASSWORD': 'adminadmin',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
     }

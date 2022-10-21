@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView,\
-    ListView, DeleteView, DetailView
+    ListView, DeleteView, DetailView, View
 
-from .models import Result, Token
+from .models import Result, Score, Token
 from .forms import CreateResultForm
 # Create your views here.
 
@@ -23,9 +23,15 @@ def index(request):
 #         return reverse('index')
 
 
-class ResultDetailView(DetailView):
+class ResultDetailView(View):
     model = Result
-    template_name = 'result_detail.html'
+    template_name = 'klass/result_details.html'
+
+    def get(self, request, pk):
+        context = {
+            "results": Score.objects.filter(result__pk=pk)
+        }
+        return render(request, self.template_name, context)
 
 
 def delete_result_view(request, pk, *args, **kwargs):
@@ -43,7 +49,7 @@ class UpdateResultView(UpdateView):
 
 class AllResultView(ListView):
     model = Result
-    template_name = 'result_list.html'
+    template_name = 'klass/result_list.html'
     context_object_name = 'results'
 
     def get_queryset(self):

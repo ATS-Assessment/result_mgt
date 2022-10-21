@@ -5,7 +5,7 @@
     {% block content %}
 
 <div class="ml-35 mt-9">
-<form class="space-y-8 divide-y divide-gray-200"  method="POST" action="{%  url 'create-result' %}">
+<form class="space-y-8 divide-y divide-gray-200"  method="POST" action="{%  url 'result-create' %}">
   {% csrf_token %}
     <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
       <div>
@@ -73,11 +73,11 @@
           <div class="mt-1 sm:mt-0 sm:col-span-2">
             <div class="grid grid-cols-3 gap-2">
 
-              <input class="border-b-2 border-black" placeholder="first test" name={{subject|add:"-test-one"}}/>
-              <input class="border-b-2 border-black"  placeholder="second test" name={{subject|add:"-test-two"}}/>
-              <input class="border-b-2 border-black" placeholder="quiz" name={{subject|add:"-quiz"}}/>
-              <input class="border-b-2 border-black"  placeholder="assignment" name={{subject|add:"-assignment"}}/>
-              <input class="border-b-2 border-black"  placeholder="exam" name={{subject|add:"-exam"}}/>
+              <input class="border-b-2 border-black" placeholder="first test" name={{ subject|add:"-test_one" }} />
+              <input class="border-b-2 border-black"  placeholder="second test" name={{  subject|add:"-test_two" }} />
+              <input class="border-b-2 border-black" placeholder="quiz" name={{ subject|add:"-quiz"  }} />
+              <input class="border-b-2 border-black"  placeholder="assignment" name={{ subject|add:"-assignment" }} />
+              <input class="border-b-2 border-black"  placeholder="exam" name={{ subject|add:"-exam" }} />
               {% comment %} <input class="border-b-2 border-black" name={{subject|add:"-test-on"}}/>
               <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/>
               <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/> {% endcomment %}
@@ -91,6 +91,13 @@
             <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <span for="region" class="block text-xl font-semibold text-gray-700 sm:mt-px sm:pt-2"> Additional Result Information</span>
 
+        </div>
+       <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Postion </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.position}}
+
+          </div>
         </div>
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
           <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Minimum Subject </label>
@@ -156,7 +163,7 @@
           <div role="group" aria-labelledby="label-notifications">
             <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
               <div>
-                <div class="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700" id="label-notifications">Push Notifications</div>
+                <div class="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700" id="label-notifications">Send to Parent/Guardian</div>
               </div>
               <div class="sm:col-span-2">
                 <div class="max-w-lg">
@@ -164,15 +171,11 @@
                   <div class="mt-4 space-y-4">
                     <div class="flex items-center">
                       <input id="push-everything" name="push-notifications" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                      <label for="push-everything" class="ml-3 block text-sm font-medium text-gray-700"> Everything </label>
+                      <label for="push-everything" class="ml-3 block text-sm font-medium text-gray-700"> Yes </label>
                     </div>
                     <div class="flex items-center">
                       <input id="push-email" name="push-notifications" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                      <label for="push-email" class="ml-3 block text-sm font-medium text-gray-700"> Same as email </label>
-                    </div>
-                    <div class="flex items-center">
-                      <input id="push-nothing" name="push-notifications" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
-                      <label for="push-nothing" class="ml-3 block text-sm font-medium text-gray-700"> No push notifications </label>
+                      <label for="push-email" class="ml-3 block text-sm font-medium text-gray-700"> No </label>
                     </div>
                   </div>
                 </div>
