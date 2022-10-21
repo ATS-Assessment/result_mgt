@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -31,13 +32,26 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'klass',
+    'result'
+    # 'tailwind',
+    # 'theme',
+    # 'django_browser_reload',
 ]
+
+
+# TAILWIND_APP_NAME = 'theme'
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+# ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -47,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'result_mgt.urls'
@@ -74,15 +89,16 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'result_mgt_db',
         'USER': 'postgres',
-        'PASSWORD':'@F3X2022',
-        'HOST':'localhost',
-        'PORT':'5432',
+        'PASSWORD': '@F3X2022',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 AUTH_USER_MODEL = 'account.User'
 
@@ -110,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
