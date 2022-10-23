@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-4rwobf7uof%#1%fff8hf6+(62z&y$3^s$8tr_j&$-&fq%qa5&-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'klass',
-    'result',
+    'result'
     # 'tailwind',
     # 'theme',
     # 'django_browser_reload',
@@ -91,8 +91,8 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'result_mgt',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'result',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',

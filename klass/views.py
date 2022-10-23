@@ -5,9 +5,13 @@ from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, DetailView, View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
 from django.forms import formset_factory
+from klass.decorators import is_admin, is_teacher
+
+from klass.mixins import AdminOnlyRequiredMixin, EducatorOnlyRequiredMixin
 
 from .models import Klass
 from .forms import ClassForm, SubjectForm
@@ -24,7 +28,7 @@ from account.models import User
 # Create your views here.
 
 
-class ClassCreateView(LoginRequiredMixin, CreateView):
+class ClassCreateView(LoginRequiredMixin, AdminOnlyRequiredMixin, CreateView):
     model = Klass
     form_class = ClassForm
     template_name = 'klass/add_class.html'
@@ -94,29 +98,31 @@ class ClassCreateView(LoginRequiredMixin, CreateView):
         })
 
 
-class CreateSubjectView(CreateView):
+class CreateSubjectView(LoginRequiredMixin, AdminOnlyRequiredMixin, CreateView):
     login_url = 'login'
-    template_name = ""
+    template_name = "klass/create_subject.html"
     form_class = SubjectForm
 
     def post(self, request, *args, **kwargs):
 
-        SubjectFormset = formset_factory(self.form_class, extra=5)
+        SubjectFormset = formset_factory(self.form_class, extra=10)
         subject_formset = SubjectFormset(request.POST)
 
         if subject_formset.is_valid():
-            data = [subject_formset.cleaned_data.items()]
+            data = [Subject(**field_dict)
+                    for field_dict in subject_formset.cleaned_data]
+            print(data)
             subjects = Subject.objects.bulk_create(data)
 
-            return HttpResponseRedirect(reverse('class-detail', args=[]))
+            return HttpResponseRedirect(reverse("admin-dashboard"))
         else:
-            return render(request, "klass/create_subject.html", {
+            return render(request, self.template_name, {
                 "subject_formset": subject_formset,
                 "errors": subject_formset.errors,
             })
 
     def get(self, request, *args, **kwargs):
-        SubjectFormset = formset_factory(self.form_class, extra=5)
+        SubjectFormset = formset_factory(self.form_class, extra=10)
         subject_formset = SubjectFormset()
 
         return render(request, "klass/create_subject.html", {
@@ -124,16 +130,25 @@ class CreateSubjectView(CreateView):
         })
 
 
-class ResultListView(ListView):
+class ResultListView(LoginRequiredMixin, EducatorOnlyRequiredMixin, ListView):
     model = Result
     template_name = 'klass/result_list.html'
     context_object_name = 'results'
 
     def get_queryset(self):
-        return Result.objects.filter(current_teacher__pk=self.request.user.pk)
+        return Result.objects.filter(current_teacher__pk=self.request.user.pk, is_inactive=False)
 
 
-class EditClass(UpdateView):
+class SubjectListView(LoginRequiredMixin, AdminOnlyRequiredMixin, ListView):
+    model = Result
+    template_name = 'klass/subject_list.html'
+    context_object_name = 'subjects'
+
+    def get_queryset(self):
+        return Subject.objects.all()
+
+
+class EditClass(LoginRequiredMixin, EducatorOnlyRequiredMixin, UpdateView):
     model = Klass
     form_class = ClassForm
     template_name = "klass/edit_klass.html"
@@ -161,7 +176,41 @@ class EditClass(UpdateView):
         })
 
 
-class EditClassAdminView(View):
+class EditResult(LoginRequiredMixin, EducatorOnlyRequiredMixin, UpdateView):
+    model = Result
+    form_class = CreateResultForm
+    template_name = "klass/edit_result.html"
+    login_url = 'login'
+
+    def post(self, request, pk=None, *args, **kwargs):
+        result_form = self.form_class(request.POST)
+        if result_form.is_valid():
+            instance = result_form.save()
+            messages.success(
+                self.request, f"The Result with {instance.admission_number} was successfully updated!")
+            return HttpResponseRedirect(reverse('result-detail'), args=[instance.pk])
+        else:
+            messages.error(request, "Invalid Input")
+            return render(request, self.template_name, {
+                'form': self.form_class(),
+                "errors": result_form.errors
+            })
+
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        return render(request, self.template_name, {
+            "form": self.form_class(request.POST),
+            "result": Result.objects.get(pk=pk)
+        })
+
+
+def toggle_delete_result(request, pk):
+    result = Result.objects.get(pk=pk)
+    result.is_inactive = not result.is_inactive
+    return redirect("result-list")
+
+
+class EditClassAdminView(LoginRequiredMixin, AdminOnlyRequiredMixin, View):
     template_name = "klass/edit_class_admin.html"
 
     def search_character(self, characters, request_body):
@@ -227,6 +276,8 @@ class EditClassAdminView(View):
         })
 
 
+@login_required(login_url='login')
+@is_admin
 def class_detail(request, pk):
 
     context = {}
@@ -238,21 +289,22 @@ def class_detail(request, pk):
     return render(request, 'klass/admin_class_detail.html', context)
 
 
+@login_required(login_url="login")
+@is_teacher
 def teacher_class_detail(request):
-    context = {}
-    try:
-        context["class"] = Klass.objects.get(teacher=request.user)
 
-        return render(request, 'klass/klass_detail.html', context)
-    except Klass.DoesNotExist:
-        messages.error(request, "You can't access this class ")
-        return HttpResponseRedirect(reverse('login'))
+    context = {}
+
+    context["class"] = Klass.objects.get(teacher=request.user)
+    print(context)
+
+    return render(request, 'klass/klass_detail.html', context)
 
 
 # def test(request):
 #     ;
 
-class CreateResultView(CreateView):
+class CreateResultView(LoginRequiredMixin, EducatorOnlyRequiredMixin, CreateView):
     model = Result
     form_class = CreateResultForm
     template_name = 'klass/result_create.html'
@@ -277,16 +329,24 @@ class CreateResultView(CreateView):
 
     def post(self, request, *args, **kwargs):
         result_form = self.form_class(request.POST)
+        teacher = User.objects.get(pk=request.user.id)
+        class_detail = Klass.objects.get(teacher__pk=teacher.pk)
 
-        # print(request.POST.dict())
+        check_result = Result.objects.filter(admission_number=request.POST['admission_number'],
+                                             session=class_detail.session, term=request.POST['term'])
+        if check_result.exists():
+            messages.error(
+                request, f"A result with same detail, is already available ")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
         result_instance = {
-            "classes": Klass.objects.get(pk=request.POST['classes']),
+            "classes": Klass.objects.get(pk=class_detail.id),
             "student_name": request.POST['student_name'],
             "admission_number": request.POST['admission_number'],
             "term": request.POST['term'],
-            "session": request.POST['session'],
+            "session": class_detail.session,
             "position": request.POST['position'],
-            "current_teacher": User.objects.get(pk=request.POST['current_teacher']),
+            "current_teacher": teacher,
             "minimum_subjects": request.POST['minimum_subjects'],
             "minimum_marks": request.POST['minimum_marks'],
             "marks_obtained": request.POST['marks_obtained'],
@@ -332,6 +392,20 @@ class CreateResultView(CreateView):
         #                 score = Score.objects.create(**score_data)
         #                 score.result = result
         #                 score.save()
+# =======
+#         print(request.POST)
+#         score_form = ScoreForm
+#         score_formset = formset_factory(
+#             score_form)
+#         if result_form.is_valid() and score_formset.is_valid():
+#             result = result.save()
+#             while result:
+#                 for subj in result.classes_set.subjects:
+#                     for score_data in score_form.cleaned_data:
+#                         score = Score.objects.create(**score_data)
+#                         score.result = result
+#                         score.save()
+# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
 
         return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
 
@@ -345,6 +419,7 @@ class CreateResultView(CreateView):
 
         return render(request, self.template_name, {
             "form": result_form,
+            "class_info": class_subjects,
             "score_form": score_form,
             "class_subjects": class_subjects.subjects
         })
@@ -384,20 +459,20 @@ class ClassLogin(View):
         })
 
 
-class ClassLogout(View):
+class ClassLogout(LoginRequiredMixin, View):
     def post(self, request):
         logout(request)
         return HttpResponseRedirect('home')
 
 
-def dashboard(request):
+# def dashboard(request):
 
-    teachers = User.objects.all()
-    return render(request, 'klass/landing_page.html', {
-        "teachers": teachers})
+#     teachers = User.objects.all()
+#     return render(request, 'klass/landing_page.html', {
+#         "teachers": teachers})
 
 
-class AdminDashBoard(View):
+class AdminDashBoard(LoginRequiredMixin, AdminOnlyRequiredMixin, View):
     def get(self, request):
         context = {
             "teachers": Klass.objects.select_related('teacher').all(),
@@ -416,6 +491,16 @@ class AdminDashBoardView(View):
             "teachers": Klass.objects.all(),
             "classes": Klass.objects.all().count(),
             "users": User.objects.filter(is_superuser=False).count(),
+        }
+        return render(request, 'klass/admin_dashboard.html', context)
+
+
+class EducatorDashBoard(LoginRequiredMixin, EducatorOnlyRequiredMixin, View):
+    def get(self, request):
+        context = {
+            "teachers": Klass.objects.select_related('teacher').all(),
+            "class": Klass.objects.get(teacher=request.user),
+
             # "results": Result.objects.all(),
             "result_count": Result.objects.all().count(),
         }
@@ -425,14 +510,41 @@ class AdminDashBoardView(View):
 
 def results(request):
     results = Result.objects.filter(current_teacher__pk=request.user.pk)
+
+    return render(request, "klass/klass_detail.html", context)
+
+
+# def results(request, pk):
+#     results = Result.objects.filter(current_teacher__pk=request.user.pk)
+#     return render(request, 'klass/result_detail.html', {
+#         "results": results})
+@ login_required(login_url="login")
+@ is_teacher
+def result_detail(request, pk):
+    result = Result.objects.get(current_teacher__pk=request.user.pk, pk=pk)
+    score = Score.objects.filter(result=result)
+
     return render(request, 'klass/result_detail.html', {
-        "results": results})
+        "result": result,
+        "score": score})
 
 
-class AdminClassListView(View):
+class AdminClassListView(AdminOnlyRequiredMixin, View):
     def get(self, request):
         context = {
             "classes": Klass.objects.select_related('teacher').all(),
         }
 
         return render(request, "klass/class_list.html", context)
+
+
+def page_404(request, exception=None):
+    return render(request, "klass/404.html")
+
+
+def page_403(request, exception=None):
+    return render(request, "klass/403.html")
+
+
+def page_500(request, exception=None):
+    return render(request, "klass/500.html")

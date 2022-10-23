@@ -18,5 +18,12 @@ class User(AbstractUser):
     role = models.CharField(choices=roles, max_length=100)
     objects = UserManager()
 
+    def get_all_teacher(self):
+        return User.objects.all().exclude(role='admin')
+
+    def __str__(self):
+        return self.full_name
+
     USERNAME_FIELD: str = 'email'
     REQUIRED_FIELDS = ['full_name']
+

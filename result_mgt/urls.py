@@ -15,11 +15,15 @@ Including another URLconf
 """
 from django.urls import include, path
 from django.contrib import admin
+from django.conf.urls import (handler404, handler403, handler500)
 
+handler500 = "klass.views.page_500"
+handler403 = "klass.views.page_403"
+handler404 = "klass.views.page_404"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("account.urls")),
     path('class/', include("klass.urls")),
-    path('result/', include('result.urls')),
+    # path('result/', include('result.urls')),
     # path("__reload__/", include("django_browser_reload.urls")),
 ]

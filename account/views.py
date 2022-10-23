@@ -1,3 +1,5 @@
+import random
+import string
 from django.shortcuts import render
 from django.views import generic
 from django.contrib import messages
@@ -11,6 +13,7 @@ from .forms import RegisterForm
 from django import forms
 
 from klass.models import Klass
+from result.models import Result, Token, Score
 
 User = get_user_model()
 
@@ -107,14 +110,24 @@ class UserLogin(generic.View):
             if user is not None:
                 login(request, user)
                 if user.is_superuser:
+                    # <<<<<<< HEAD
                     return HttpResponseRedirect(reverse('admin-dashboard'))
+# =======
+#                     return render(request, 'admin_base_template.html')
+# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
                 else:
                     klass = Klass.objects.filter(
                         teacher=request.user
                     )
                     if klass.exists():
                         class_info = klass.first()
+# <<<<<<< HEAD
                         return HttpResponseRedirect(reverse("teacher-class-detail"))
+# =======
+
+
+#                         return HttpResponseRedirect(reverse("teacher-class-detail", args=[class_info.pk]))
+# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
                     else:
                         messages.info(
                             request, 'Hi, you are yet to be assigned a class, if this seems to be an issue, please contact admin')
@@ -135,3 +148,89 @@ class UserLogout(generic.View):
 
 def landing_page(request):
     return render(request, 'klass/landing_page.html',)
+
+
+class CreateTokenView(generic.View):
+
+    def token_generator(self):
+        letters = string.ascii_letters
+        digits = string.digits
+        random_numbers = random.sample(letters + digits, 10)
+        ran_num = ''.join(random_numbers)
+        return ran_num
+
+    def get(self, request, *args, **kwargs):
+        tokes = Token.objects.all()
+        return render(
+            request, 'klass/token_list.html', {"tokens": tokes}
+        )
+
+    def post(self, request):
+        numbers = request.POST.get('number')
+        for number in range(int(numbers)):
+            Token.objects.create(token=self.token_generator(), count=0)
+
+        return HttpResponseRedirect(
+            (request.META.get('HTTP_REFERER'))
+        )
+
+
+class CheckResultView(generic.View):
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            "sessions": ["2022/2023", "2023/2024", "2024/2025"],
+            "terms": ["first_term", "second_term", "third_term"]
+        }
+        return render(request, 'check_result.html', context)
+
+    def post(self, request, *args, **kwargs):
+
+        admission_num = request.POST.get('admission_number')
+        student_token = request.POST.get('token')
+        academic_session = request.POST.get('session')
+        academic_term = request.POST.get('term')
+
+        # token_check = Token.objects.filter(token=student_token).exist()
+        try:
+            token = Token.objects.get(token=student_token)
+
+            if token:
+                if not token.result:
+                    token.count += 1
+
+                    result = Result.objects.filter(
+                        admission_number=admission_num,
+                        session=academic_session,
+                        term=academic_term
+                    )
+                    token.result = result.first()
+                    token.save()
+
+                    score = Score.objects.filter(result=result.first())
+
+                    return render(request, 'result_details.html', {
+                        "info": result.first(),
+                        "results": score})
+
+                if token.count is 5:
+                    messages.error(
+                        request, "A token can not be used more than 5 times")
+                    return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+                if token.result and token.count != 5:
+                    token.count += 1
+                    token.save()
+
+                    result = Result.objects.filter(
+                        admission_number=admission_num,
+                        session=academic_session,
+                        term=academic_term
+                    )
+                    score = Score.objects.filter(result=result.first())
+                    return render(request, 'result_details.html', {
+                        "info": result.first(),
+                        "results": score})
+
+        except Token.DoesNotExist:
+            messages.error(request, "The token is invalid")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))

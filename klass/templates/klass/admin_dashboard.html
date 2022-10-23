@@ -32,7 +32,7 @@
                 </div>
                 <div class="bg-gray-50 px-5 py-3">
                   <div class="text-sm">
-                    <a href="#" class="font-medium text-cyan-700 hover:text-cyan-900">View all</a>
+                    <a href="{% url 'admin-class-list' %}" class="font-medium text-cyan-700 hover:text-cyan-900">View all</a>
                   </div>
                 </div>
               </div>
@@ -126,6 +126,8 @@
                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ teacher.subjects|length }}</td>
                             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ teacher.created_at|timesince }}</td>
                           </tr>
+                          {% empty %}
+                          {% comment %} <span>No Educator has registered yet</span> {% endcomment %}
                         {% endfor %}
                         <!-- More people... -->
                       </tbody>

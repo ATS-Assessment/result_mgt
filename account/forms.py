@@ -6,6 +6,24 @@ from .models import User
 from django.utils.translation import gettext_lazy as _
 
 
+class TeacherForm(forms.ModelForm):
+    pass
+
+    # class Meta:
+    #     model = User
+    #     fields = ('__all__',)
+    #     labels = {
+    #         "password1": 'Password',
+    #         "password2": 'Confirm Password'
+    #     }
+    #
+    # def clean(self):
+    #     name = self.cleaned_data.get('name')
+    #
+    #     if len(name) < 5:
+    #         self._errors['username'] = self.error_class([
+    #             'Minimum 5 characters required'
+    #         ])
 # class TeacherForm(forms.ModelForm):
 
 #     class Meta:
