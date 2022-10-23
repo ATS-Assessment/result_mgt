@@ -53,7 +53,7 @@ class Result(models.Model):
     active_results = ActiveResultManager()
 
     def __str__(self):
-        return self.student_name + " - " + str(self.classes) + f"({self.session})"
+        return str(self.student_name) + " - " + str(self.classes) + str({self.session})
 
     def get_absolute_url(self):
         return redirect('index')
@@ -79,6 +79,7 @@ class Score(models.Model):
     #     ('E8', 'E8'),
     #     ('F9', 'F9')
     # )
+
     REMARKS = (
         ('excellent', 'Excellent'),
         ('very_good', 'Very Good'),
@@ -148,4 +149,4 @@ class Score(models.Model):
         return super().save()
 
     def __str__(self):
-        return f"{self.subject_name} - {self.grade} - {self.total_mark} - {self.remarks}"
+        return str(f"{self.subject_name} - {self.grade} - {self.total_mark} - {self.remarks}")
