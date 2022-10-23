@@ -47,6 +47,7 @@ class Subject(models.Model):
     )
     name = models.CharField(max_length=50)
     level = models.CharField(choices=LEVEL, max_length=50)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return str(self.name)

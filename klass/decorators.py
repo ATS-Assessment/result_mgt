@@ -6,7 +6,7 @@ from django.contrib import messages
 
 def is_teacher(view_func):
     def wrapper_func(request, *args, **kwargs):
-        if request.user.role == "teacher":
+        if not request.user.is_superuser:
             return view_func(request, *args, **kwargs)
         else:
             messages.info(
@@ -19,7 +19,7 @@ def is_teacher(view_func):
 
 def is_admin(view_func):
     def wrapper_func(request, *args, **kwargs):
-        if request.user.role == "admin":
+        if request.user.is_superuser:
             return view_func(request, *args, **kwargs)
         else:
             messages.info(

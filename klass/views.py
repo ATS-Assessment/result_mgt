@@ -105,7 +105,7 @@ class CreateSubjectView(LoginRequiredMixin, AdminOnlyRequiredMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
 
-        SubjectFormset = formset_factory(self.form_class, extra=5)
+        SubjectFormset = formset_factory(self.form_class, extra=10)
         subject_formset = SubjectFormset(request.POST)
 
         if subject_formset.is_valid():
@@ -122,7 +122,7 @@ class CreateSubjectView(LoginRequiredMixin, AdminOnlyRequiredMixin, CreateView):
             })
 
     def get(self, request, *args, **kwargs):
-        SubjectFormset = formset_factory(self.form_class, extra=5)
+        SubjectFormset = formset_factory(self.form_class, extra=10)
         subject_formset = SubjectFormset()
 
         return render(request, "klass/create_subject.html", {
@@ -137,6 +137,15 @@ class ResultListView(LoginRequiredMixin, EducatorOnlyRequiredMixin, ListView):
 
     def get_queryset(self):
         return Result.objects.filter(current_teacher__pk=self.request.user.pk, is_inactive=False)
+
+
+class SubjectListView(LoginRequiredMixin, AdminOnlyRequiredMixin, ListView):
+    model = Result
+    template_name = 'klass/subject_list.html'
+    context_object_name = 'subjects'
+
+    def get_queryset(self):
+        return Subject.objects.all()
 
 
 class EditClass(LoginRequiredMixin, EducatorOnlyRequiredMixin, UpdateView):
@@ -159,8 +168,8 @@ class EditClass(LoginRequiredMixin, EducatorOnlyRequiredMixin, UpdateView):
                 "errors": class_form.errors
             })
 
-    def get(self, request, *args, **kwargs):
-        pk = self.kwargs.get("pk")
+    def get(self, request, pk):
+        # pk = self.kwargs.get("pk")
         return render(request, self.template_name, {
             "edit_form": self.form_class(),
             "class": Klass.objects.get(pk=pk)
@@ -204,10 +213,66 @@ def toggle_delete_result(request, pk):
 class EditClassAdminView(LoginRequiredMixin, AdminOnlyRequiredMixin, View):
     template_name = "klass/edit_class_admin.html"
 
+    def search_character(self, characters, request_body):
+        data = list(request_body.keys())
+        final_data = []
+        for char in data:
+            if char.startswith(characters) or char.endswith(characters):
+                final_data.append(char)
+        return final_data
+
+    def find_subjects(self, args, request_body):
+        subjects = self.search_character(args, request_body)
+        found_subject = []
+        for data in subjects:
+            found_subject.append(request_body[data])
+        return found_subject
+
+    def post(self, request, pk):
+        class_name = request.POST.get('class_name', '')
+        class_size = request.POST.get('class_size', '')
+        educator = request.POST.get('teacher', '')
+        session = request.POST.get('session', '')
+        dict_object = request.POST.dict()
+        subjects = self.find_subjects('subject', dict_object)
+        class_instance = Klass.objects.get(pk=pk)
+        class_instance.name = class_name
+        class_instance.no_of_students = class_size
+        class_instance.teacher = User.objects.get(full_name=educator)
+        class_instance.session = session
+        class_instance.subjects = subjects
+
+        klass = Klass.objects.get(pk=pk)
+
+        if klass.teacher.full_name != educator:
+            teacher_dict = {
+                'name': klass.teacher.full_name,
+                'session': klass.session
+            }
+            pre_teacher = [class_instance.previous_teachers].append(
+                teacher_dict)
+
+            class_instance.previous_teachers = pre_teacher
+
+        check_teacher = Klass.objects.filter(teacher__full_name=educator)
+        if check_teacher:
+            messages.error(
+                request, f"{educator} has been assigned a class")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
+        class_instance.save()
+
+        return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
     def get(self, request, pk):
+
         return render(request, self.template_name, {
             # "login_form": self.form_class(),
-            "class": Klass.objects.filter(pk=pk).first()
+            "class": Klass.objects.filter(pk=pk).first(),
+            "users": User.objects.filter(is_superuser=False),
+            "sessions": ["2022/2023", "2023/2024", "2024/2025"],
+            "senior_subjects": Subject.objects.filter(level="SENIOR"),
+            "junior_subjects": Subject.objects.filter(level="JUNIOR")
         })
 
 
@@ -226,7 +291,8 @@ def class_detail(request, pk):
 
 @login_required(login_url="login")
 @is_teacher
-def teacher_class_detail(request, pk):
+def teacher_class_detail(request):
+
     context = {}
 
     context["class"] = Klass.objects.get(teacher=request.user)
@@ -243,21 +309,103 @@ class CreateResultView(LoginRequiredMixin, EducatorOnlyRequiredMixin, CreateView
     form_class = CreateResultForm
     template_name = 'klass/result_create.html'
 
+    def search_character(self, characters, request_body):
+        data = list(request_body.keys())
+        final_data = []
+        for char in data:
+            if char.startswith(characters) or char.endswith(characters):
+                final_data.append(char)
+        return final_data
+
+    def find_result(self, subject_arr, request_body):
+        q = request_body
+        for char in subject_arr:
+            l = self.search_character(char, request_body)
+            obj = {}
+            for x in l:
+                key = x.split('-')
+                obj[key[len(key) - 1]] = q.get(x)
+            return obj
+
     def post(self, request, *args, **kwargs):
         result_form = self.form_class(request.POST)
+        teacher = User.objects.get(pk=request.user.id)
+        class_detail = Klass.objects.get(teacher__pk=teacher.pk)
 
-        print(request.POST)
-        score_form = ScoreForm
-        score_formset = formset_factory(
-            score_form)
-        if result_form.is_valid() and score_formset.is_valid():
-            result = result.save()
-            while result:
-                for subj in result.classes_set.subjects:
-                    for score_data in score_form.cleaned_data:
-                        score = Score.objects.create(**score_data)
-                        score.result = result
-                        score.save()
+        check_result = Result.objects.filter(admission_number=request.POST['admission_number'],
+                                             session=class_detail.session, term=request.POST['term'])
+        if check_result.exists():
+            messages.error(
+                request, f"A result with same detail, is already available ")
+            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
+        result_instance = {
+            "classes": Klass.objects.get(pk=class_detail.id),
+            "student_name": request.POST['student_name'],
+            "admission_number": request.POST['admission_number'],
+            "term": request.POST['term'],
+            "session": class_detail.session,
+            "position": request.POST['position'],
+            "current_teacher": teacher,
+            "minimum_subjects": request.POST['minimum_subjects'],
+            "minimum_marks": request.POST['minimum_marks'],
+            "marks_obtained": request.POST['marks_obtained'],
+            "term_average": request.POST['term_average'],
+            "comment": request.POST['comment'],
+            "guardian_email": request.POST['guardian_email'],
+            "number_of_subjects_taken": request.POST.get('number_of_subjects_taken', 1),
+            "number_of_passes": request.POST.get("number_of_passes", 1),
+            "number_of_failures": request.POST.get('number_of_failures', 1)
+        }
+
+        new_result = Result(**result_instance)
+        new_result.save()
+        print(result_instance)
+
+        class_subjects = Klass.objects.filter(
+            teacher__pk=request.user.id).first()
+
+        subject_arr = class_subjects.subjects
+        # result_subject = self.find_result(subject_arr, request.POST.dict())
+
+        for char in subject_arr:
+            l = self.search_character(char, request.POST.dict())
+            obj = {}
+            for x in l:
+                key = x.split('-')
+                obj[key[len(key) - 1]] = request.POST.dict().get(x)
+                obj['subject_name'] = x.replace((key[len(key) - 1]), '')
+            result_score = Score(
+                result=Result.objects.get(pk=new_result.pk), **obj)
+            result_score.save()
+
+        # print(result_subject)
+
+        # score_form = ScoreForm
+        # score_formset = formset_factory(
+        #     score_form)
+        # if result_form.is_valid() and score_formset.is_valid():
+        #     result = result.save()
+        #     while result:
+        #         for subj in result.classes_set.subjects:
+        #             for score_data in score_form.cleaned_data:
+        #                 score = Score.objects.create(**score_data)
+        #                 score.result = result
+        #                 score.save()
+# =======
+#         print(request.POST)
+#         score_form = ScoreForm
+#         score_formset = formset_factory(
+#             score_form)
+#         if result_form.is_valid() and score_formset.is_valid():
+#             result = result.save()
+#             while result:
+#                 for subj in result.classes_set.subjects:
+#                     for score_data in score_form.cleaned_data:
+#                         score = Score.objects.create(**score_data)
+#                         score.result = result
+#                         score.save()
+# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
 
         return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
 
@@ -271,6 +419,7 @@ class CreateResultView(LoginRequiredMixin, EducatorOnlyRequiredMixin, CreateView
 
         return render(request, self.template_name, {
             "form": result_form,
+            "class_info": class_subjects,
             "score_form": score_form,
             "class_subjects": class_subjects.subjects
         })
@@ -336,16 +485,33 @@ class AdminDashBoard(LoginRequiredMixin, AdminOnlyRequiredMixin, View):
         return render(request, "klass/klass_detail.html", context)
 
 
+class AdminDashBoardView(View):
+    def get(self, request):
+        context = {
+            "teachers": Klass.objects.all(),
+            "classes": Klass.objects.all().count(),
+            "users": User.objects.filter(is_superuser=False).count(),
+        }
+        return render(request, 'klass/admin_dashboard.html', context)
+
+
 class EducatorDashBoard(LoginRequiredMixin, EducatorOnlyRequiredMixin, View):
     def get(self, request):
         context = {
             "teachers": Klass.objects.select_related('teacher').all(),
             "class": Klass.objects.get(teacher=request.user),
+
             # "results": Result.objects.all(),
             "result_count": Result.objects.all().count(),
         }
 
-        return render(request, "klass/klass_detail.html", context)
+        return render(request, "klass/admin_dashboard.html", context)
+
+
+def results(request):
+    results = Result.objects.filter(current_teacher__pk=request.user.pk)
+
+    return render(request, "klass/klass_detail.html", context)
 
 
 # def results(request, pk):
@@ -356,7 +522,8 @@ class EducatorDashBoard(LoginRequiredMixin, EducatorOnlyRequiredMixin, View):
 @ is_teacher
 def result_detail(request, pk):
     result = Result.objects.get(current_teacher__pk=request.user.pk, pk=pk)
-    score = Score.objects.get(result=result)
+    score = Score.objects.filter(result=result)
+
     return render(request, 'klass/result_detail.html', {
         "result": result,
         "score": score})

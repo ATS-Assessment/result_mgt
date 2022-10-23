@@ -5,7 +5,7 @@ from account.models import User
 class AdminOnlyRequiredMixin:
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.role == "admin":
+        if request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied
 
@@ -13,6 +13,6 @@ class AdminOnlyRequiredMixin:
 class EducatorOnlyRequiredMixin:
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.role == "teacher":
+        if not request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied

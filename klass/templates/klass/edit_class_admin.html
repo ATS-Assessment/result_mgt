@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 {% include 'messages.html' %}
-  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'create-class' %}" method="POST">
+  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'edit-class-admin' class.pk %}" method="POST">
     {% csrf_token %}
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
@@ -14,14 +14,14 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="class_name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Class name</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="class_name" id="class_name" value={{ class.name }} autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
+              <input type="text" name="class_name" id="class_name" value={{ class.name }} autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Number of Students</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="class_size" id="class_size" value={{ class.no_of_students }} autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
+              <input type="text" name="class_size" id="class_size" value={{ class.no_of_students }} autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 
@@ -34,9 +34,10 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    {% for subject in junior_subject %}
+                    {% for subject in junior_subjects %}
                       <div class="flex items-center">
-                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
+                        {% if subject in class.subjects %} 'checked' {% endif %} 
+                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   {% if subject.name in class.subjects %} checked {% else %} '' {% endif %}  class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300" />
                         <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
                       </div>
                     {% endfor %}
@@ -49,9 +50,10 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    {% for subject in senior_subject %}
+                    {% for subject in senior_subjects %}
                       <div class="flex items-center">
-                        <input id="subject" name={{ subject.name|add:"-subject" }} type="radio" value={{ subject.name }}   class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300" />
+                        {{subject|add:'quiz'}}
+                        <input id="subject" name={{ subject.name|add:"-subject" }} {% if subject in class.subjects %} checked {% endif %}  type="radio" value={{ subject.name }}   class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300" />
                         <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
                       </div>
                     {% endfor %}
@@ -64,9 +66,9 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="country" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Educator</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="teacher" name="teacher" autocomplete="country-name" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
+              <select id="teacher" name="teacher" autocomplete="country-name" class="max-w-lg block focus:ring-gray-500 focus:border-gray-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
                 {% for user in users %}
-                  <option>{{ user.full_name }}</option>
+                  <option >{{ user.full_name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -75,9 +77,9 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="country" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Session</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="session" name="session" autocomplete="session" class="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
+              <select id="session" name="session" autocomplete="session" class="max-w-lg block focus:ring-gray-500 focus:border-gray-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
                 {% for session in sessions %}
-                <option>{{ session }}</option>
+                <option >{{ session }}</option>
               {% endfor %}
               </select>
             </div>
@@ -88,8 +90,8 @@
 
     <div class="pt-5">
       <div class="flex justify-end">
-        <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
-        <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+        <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Cancel</button>
+        <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Save</button>
       </div>
     </div>
   </form>
