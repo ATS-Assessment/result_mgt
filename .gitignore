@@ -11,6 +11,8 @@ migrations
 # C extensions
 theme
 settings
+.settings
+
 *.so
 .resenv
 renv
