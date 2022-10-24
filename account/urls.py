@@ -9,10 +9,17 @@ from .pdf_generator import result_view, index
 from .views import RegisterView, UserLogin, UserLogout, Home, landing_page, CheckResultView
 
 urlpatterns = [
-    path('home', Home.as_view(), name='admin-page'),
-    path('index/', index, name='index'),
-    path('index/result_view', result_view, name='result-view'),
-    # path('', landing_page, name="landing-page"),
+    #     path('home', Home.as_view(), name='admin-page'),
+    # <<<<<<< HEAD
+    #     path('index/', index, name='index'),
+    #     path('index/result_view', result_view, name='result-view'),
+    #     # path('', landing_page, name="landing-page"),
+    # =======
+    # <<<<<<< HEAD
+    #     path('index/', index, name='index'),
+    #     path('index/result_view', result_view, name='result-view'),
+    #     path('', landing_page, name="landing-page"),
+
     path('', landing_page, name="home"),
     path('login/', UserLogin.as_view(), name='login'),
     path('logout/', UserLogout.as_view(), name='logout'),
