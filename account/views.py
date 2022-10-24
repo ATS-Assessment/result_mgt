@@ -172,14 +172,14 @@ class CheckResultView(generic.View):
 
     def post(self, request, *args, **kwargs):
         admission_num = request.POST.get('admission_number')
-        student_token = request.POST.get('token')
         academic_session = request.POST.get('session')
+        term = request.POST.get('term')
 
         # token_check = Token.objects.filter(token=student_token).exist()
         result_token = Result.objects.filter(
             admission_number=admission_num,
             session=academic_session,
-            result__token=student_token
+            term=term
         ).exist()
         if result_token:
             if result_token != 5:
@@ -189,6 +189,8 @@ class CheckResultView(generic.View):
         else:
             messages.error(request, "The token number you input is invalid")
             return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+
+        
 
 
 

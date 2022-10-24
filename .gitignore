@@ -97,3 +97,6 @@ __pypackages__/
 /.idea/result_mgt.iml
 /result_mgt/Scripts/sqlformat.exe
 /.idea/vcs.xml
+acctenv
+/acctenv
+.idea
