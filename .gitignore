@@ -10,8 +10,10 @@ db.sqlite3
 migrations
 # C extensions
 theme
+settings
 *.so
 .resenv
+renv
 resenv
 # Distribution / packaging
 .Python
@@ -97,3 +99,6 @@ __pypackages__/
 /.idea/result_mgt.iml
 /result_mgt/Scripts/sqlformat.exe
 /.idea/vcs.xml
+acctenv
+/acctenv
+.idea
