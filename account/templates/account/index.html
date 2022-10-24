@@ -1,0 +1,15 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container shadow"
+         style="max-width: 640px; margin: auto; margin-top: 2em; padding: 2em">
+        <h4>To generate a pdf format of your result,please click the button below:</h4>
+        <a class="btn btn-success" href="{% url 'result-view' %}">Print Result</a>
+    </div>
+</body>
+</html>

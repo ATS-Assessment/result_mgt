@@ -1,0 +1,58 @@
+{% extends 'admin_base_template.html' %}
+{% block content %}
+{% include 'messages.html' %}
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        {% comment %} <h1 class="text-xl font-semibold text-gray-900">Users</h1>
+        <p class="mt-2 text-sm text-gray-700">A list of all the users in your account including their name, title, email and role.</p> {% endcomment %}
+      </div>
+      {% comment %} <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <button type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:w-auto">Edit Result</button>
+      </div> {% endcomment %}
+    </div>
+    <div class="mt-8 flex flex-col">
+      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr class="divide-x divide-gray-200">
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">s/n</th>
+                  <th scope="col" class="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">Subject name</th>
+                  <th scope="col" class="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">Level</th>
+                  <th scope="col" class="relative py-3.5 pl-3">
+                    <span class="sr-only">Edit</span>
+                    <span class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Action</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                {% for subject in subjects %}
+                  {% if subject.name %}
+                    <tr class="divide-x divide-gray-200">
+                      <td class="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-6">{{ forloop.counter }}</td>
+                      <td class="whitespace-nowrap p-4 text-sm text-gray-800">{{ subject.name }}</td>
+                      <td class="whitespace-nowrap p-4 text-sm text-gray-800">{{ subject.level }}</td>
+                      <td class="relative py-4 pl-3 text-sm font-medium text-right whitespace-nowrap">
+                        <a href="{% url 'toggle-subject' subject.id %}" class="text-red-700  hover:text-red-900">{% if subject.is_active %}
+                         <p class="m-5"> Deactivate</p>
+                          {% else %} 
+                          <p class="text-green-500 m-5">Activate</p>
+                          {% endif %}
+                        </a>
+                      </td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+                <!-- More people... -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

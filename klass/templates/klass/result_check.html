@@ -1,0 +1,104 @@
+{% extends 'klass/base.html' %}
+{% block content %}
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto mt-4">
+        <div class="sm:flex-auto">
+          <h1 class="text-xl font-semibold text-gray-900">Result Sheet</h1>
+          <p class="mt-2 text-sm text-gray-700">Result for Admission ID:{{ info.admission_number }}.</p>
+          <p class="mt-2 text-sm text-gray-700">Student Name:{{ info.student_name }}.</p>
+          <p class="mt-2 text-sm text-gray-700">Session: {{ info.session }}: {{ info.term }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <h1 class="text-xl font-semibold text-gray-900">Result Info</h1>
+      <div class="grid-cols-4 gap-4 grid">
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Class <span>{{ info.classes }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Student name <span>{{ info.student_name }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Session <span>{{ info.session }}: {{ info.term }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Position <span>{{ info.position }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Minimum subjects <span>{{ info.subjects }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Number of subjects taken <span>{{ info.number_of_subjects_taken }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Number of passes <span>{{ info.number_of_passes }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Number of failures <span>{{ info.number_of_failures }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Minimum marks <span>{{ info.minimum_marks }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Marks obtained <span>{{ info.marks_obtained }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Term average <span>{{ info.term_average }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Comment <span>{{ info.comment }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Guardian email <span>{{ info.guardian_email }}</span>
+        </p>
+        <p class="mt-2 text-sm font-medium flex flex-col text-gray-900">
+          Date added <span>{{ info.date_created }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="mt-8 flex flex-col">
+      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-2 ring-black ring-opacity-10">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr class="divide-x divide-gray-200">
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">Subject</th>
+                  <th scope="col" class="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">First Test</th>
+                  <th scope="col" class="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">Second Test</th>
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6">Quiz</th>
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6">Assignment</th>
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6">Total</th>
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6">Grade</th>
+                  <th scope="col" class="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pr-6">Remarks</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                {% for subject in results %}
+                  <tr class="divide-x divide-gray-200">
+                    <td class="whitespace-nowrap py-4 font-medium pl-4 pr-4 text-sm font-medium text-gray-900 sm:pl-6">{{ subject.subject_name }}</td>
+                    <td class="whitespace-nowrap p-4 font-medium text-sm text-black">{{ subject.test_one }}</td>
+                    <td class="whitespace-nowrap p-4 font-medium text-sm text-black">{{ subject.test_two }}</td>
+                    <td class="whitespace-nowrap p-4 font-medium text-sm text-black">{{ subject.quiz }}</td>
+                    <td class="whitespace-nowrap py-4 font-medium pl-4 pr-4 text-sm text-black sm:pr-6">{{ subject.assignment }}</td>
+                    <td class="whitespace-nowrap p-4 font-medium text-sm text-black">{{ subject.total }}</td>
+                    <td class="whitespace-nowrap p-4 font-medium text-sm text-black">{{ subject.grade }}</td>
+                    <td class="whitespace-nowrap p-4 font-medium text-sm text-black">{{ subject.remarks }}</td>
+                    <td class="relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-6">
+                      <a href="" class="text-gray-600 hover:text-gray-900">View<span class="sr-only"></span></a>
+                    </td>
+                  </tr>
+                {% endfor %}
+                <!-- More people... -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
