@@ -1,0 +1,179 @@
+{% extends 'klass/base.html' %}
+ {% load static %}
+ {% include 'messages.html' %}
+ <div class=" mt-auto ml-26">
+
+    {% block content %}
+
+<div class="ml-35 mt-9">
+<form class="space-y-8 divide-y divide-gray-200"  method="POST" action="{%  url 'create-result' %}">
+  {% csrf_token %}
+    <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+      <div>
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Generate Result </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">Guardians/Parents can also  receive this result  as a mail.</p>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">Current Session : {{ class_info.session }}</p>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">Current Teacher : {{class_info.teacher.full_name}}</p>
+      </div>
+      <div class="space-y-6 sm:space-y-5">
+   
+
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="last-name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Student Name </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+             {{form.student_name}}
+            {% comment %} <input type="text" name="last-name" id="last-name" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"> {% endcomment %}
+          </div>
+        </div>
+
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="email" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Admission Number </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+             {{form.admission_number}}
+            {% comment %} <input id="email" name="email" type="email" autocomplete="email" class="block max-w-lg w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300 rounded-md"> {% endcomment %}
+          </div>
+        </div>
+
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="term" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Term </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.term}}
+
+          </div>
+        </div>
+             <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <span for="region" class="block text-xl font-semibold text-gray-700 sm:mt-px sm:pt-2"> Subject Scores </span>
+        {% comment %} <p class="mt-1 max-w-2xl text-sm text-gray-500">Subject list with their score</p> {% endcomment %}
+        </div>
+
+        {% for subject in class_subjects %}
+         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> {{ subject}}</label>
+              <div class="mt-1 sm:mt-0 sm:col-span-2">
+                <div class="grid grid-cols-3 gap-2">
+
+
+              <input class="border-b-2 border-black" placeholder="first test" name={{ subject|add:"-test_one" }} />
+              <input class="border-b-2 border-black"  placeholder="second test" name={{  subject|add:"-test_two" }} />
+              <input class="border-b-2 border-black" placeholder="quiz" name={{ subject|add:"-quiz"  }} />
+              <input class="border-b-2 border-black"  placeholder="assignment" name={{ subject|add:"-assignment" }} />
+              <input class="border-b-2 border-black"  placeholder="exam" name={{ subject|add:"-exam" }} />
+              {% comment %} <input class="border-b-2 border-black" name={{subject|add:"-test-on"}}/>
+              <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/>
+              <input class="border-b-2 border-black" name={{subject|add:"-test-one"}}/> {% endcomment %}
+
+</div>
+          </div>
+
+        </div>
+        {%endfor %}
+
+
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <span for="region" class="block text-xl font-semibold text-gray-700 sm:mt-px sm:pt-2"> Additional Result Information</span>
+        </div>
+       <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Postion </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.position}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Minimum Subject </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.minimum_subjects}}
+          </div>
+        </div>
+
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> No. of Subjects Taken</label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.number_of_subjects_taken}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> No. of Passed Subjects </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.number_of_passes}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Minimum Mark </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.minimum_marks}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Marks Obtained </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.marks_obtained}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Average of Term </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.term_average}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Teacher Remark / Comment </label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.comment}}
+
+          </div>
+        </div>
+        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+          <label for="postal-code" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Guardians/Parents Mail  Address</label>
+          <div class="mt-1 sm:mt-0 sm:col-span-2">
+            {{form.guardian_email}}
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+        <div class="pt-6 sm:pt-5">
+          <div role="group" aria-labelledby="label-notifications">
+            <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-baseline">
+              <div>
+                <div class="text-base font-medium text-gray-900 sm:text-sm sm:text-gray-700" id="label-notifications">Send to Parent/Guardian</div>
+              </div>
+              <div class="sm:col-span-2">
+                <div class="max-w-lg">
+                  <p class="text-sm text-gray-500">These would be delivered via mail to the students Guardians/Parents.</p>
+                  <div class="mt-4 space-y-4">
+                    <div class="flex items-center">
+                      <input id="push-everything" name="push-notifications" type="radio" class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300">
+                      <label for="push-everything" class="ml-3 block text-sm font-medium text-gray-700"> Yes </label>
+                    </div>
+                    <div class="flex items-center">
+                      <input id="push-email" name="push-notifications" type="radio" class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300">
+                      <label for="push-email" class="ml-3 block text-sm font-medium text-gray-700"> No </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-5">
+    <div class="flex justify-end">
+      <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Cancel</button>
+      <button class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">Save</button>
+    </div>
+  </div>
+</form>
+    </div>
+    </div>
+{% endblock %}

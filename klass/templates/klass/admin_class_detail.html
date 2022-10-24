@@ -1,0 +1,67 @@
+{% extends 'admin_base_template.html' %}
+{% load static %}
+{% block content %}
+  {% include 'messages.html' %}
+  <!-- This example requires Tailwind CSS v2.0+ -->
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg mt-16">
+    <div class="flex justify-between">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Class Information</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">class details containing name ,size and it's previos teacher</p>
+      </div>
+      <div class="m-4">
+        <a href="{% url 'edit-class-admin' class.id %}">
+        <button type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:w-auto">Edit Class</button>
+        </a>
+      </div>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+      <dl class="sm:divide-y sm:divide-gray-200">
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Class name</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.name }}</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Class size</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.no_of_students }} students</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Teacher</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.teacher.full_name }}</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Current session</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ class.session }}</dd>
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-100">
+          <dt class="text-sm font-medium text-gray-500 font-bold">Subjects offerings</dt>
+
+          {% for subject in class.subjects %}
+            <div class="flex">
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-semibold">{{ forloop.counter }}. &nbsp;</dd>
+              <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 font-semibold">{{ subject }}</dd>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <dt class="text-sm font-medium text-gray-500">Previous teachers</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+            <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
+              <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                <div class="w-0 flex-1 flex items-center">
+                  <!-- Heroicon name: solid/paper-clip -->
+                  <span class="">1</span>
+                  <span class="ml-2 flex-1 w-0 truncate font-semibold">Afolabi Smith</span>
+                  <span class="font-semibold">2020/2021</span>
+                </div>
+                <div class="ml-4 flex-shrink-0">
+                  <a href="#" class="font-medium text-gray-600 hover:text-gray-500">View teacher history</a>
+                </div>
+              </li>
+            </ul>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+{% endblock %}

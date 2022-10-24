@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-4rwobf7uof%#1%fff8hf6+(62z&y$3^s$8tr_j&$-&fq%qa5&-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -88,12 +88,13 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'result_mgt_db',
+        'NAME': 'result',
         'USER': 'postgres',
-        'PASSWORD': '@F3X2022',
+        'PASSWORD': 'root',
         'HOST': 'localhost',
         'PORT': '5432',
     }

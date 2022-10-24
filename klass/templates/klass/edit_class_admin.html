@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 {% include 'messages.html' %}
-  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'create-class' %}" method="POST">
+  <form class="space-y-8 divide-y divide-gray-200" action="{% url 'edit-class-admin' class.pk %}" method="POST">
     {% csrf_token %}
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
@@ -14,14 +14,14 @@
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="class_name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Class name</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="class_name" id="class_name" autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
+              <input type="text" name="class_name" id="class_name" value={{ class.name }} autocomplete="given-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">Number of Students</label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="class_size" id="class_size" autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
+              <input type="text" name="class_size" id="class_size" value={{ class.no_of_students }} autocomplete="family-name" class="max-w-lg block w-full shadow-sm focus:ring-gray-500 focus:border-gray-500 sm:max-w-xs sm:text-sm border-gray-900 border-b-2" />
             </div>
           </div>
 
@@ -34,13 +34,12 @@
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
                   <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-                    {% for subject in junior_subject %}
-                    {% if subject.is_active %}
+                    {% for subject in junior_subjects %}
                       <div class="flex items-center">
-                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300" />
+                        {% if subject in class.subjects %} 'checked' {% endif %} 
+                        <input id="subject"  name={{ subject.name|add:"-subject" }} type="radio"  value={{ subject.name }}   {% if subject.name in class.subjects %} checked {% else %} '' {% endif %}  class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300" />
                         <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
                       </div>
-                      {% endif %}
                     {% endfor %}
                   </div>
                 </fieldset>
@@ -50,14 +49,13 @@
                 {% comment %} <p class="text-sm leading-5 text-gray-500">How do you prefer to receive notifications?</p> {% endcomment %}
                 <fieldset class="mt-4">
                   <legend class="sr-only">Notification method</legend>
-                  <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10 ">
-                    {% for subject in senior_subject %}
-                    {% if subject.is_active %}
-                      <div class="flex items-center ">
-                        <input id="subject" name={{ subject.name|add:"-subject" }} type="radio" value={{ subject.name }}   class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300" />
+                  <div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                    {% for subject in senior_subjects %}
+                      <div class="flex items-center">
+                        {{subject|add:'quiz'}}
+                        <input id="subject" name={{ subject.name|add:"-subject" }} {% if subject in class.subjects %} checked {% endif %}  type="radio" value={{ subject.name }}   class="focus:ring-gray-500 h-4 w-4 text-gray-600 border-gray-300" />
                         <label for="subject" class="ml-3 block text-sm font-medium text-gray-700">{{ subject.name }}</label>
                       </div>
-                      {% endif %}
                     {% endfor %}
                   </div>
                 </fieldset>
@@ -70,7 +68,7 @@
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <select id="teacher" name="teacher" autocomplete="country-name" class="max-w-lg block focus:ring-gray-500 focus:border-gray-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
                 {% for user in users %}
-                  <option>{{ user.full_name }}</option>
+                  <option >{{ user.full_name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -81,7 +79,7 @@
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <select id="session" name="session" autocomplete="session" class="max-w-lg block focus:ring-gray-500 focus:border-gray-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md">
                 {% for session in sessions %}
-                <option>{{ session }}</option>
+                <option >{{ session }}</option>
               {% endfor %}
               </select>
             </div>

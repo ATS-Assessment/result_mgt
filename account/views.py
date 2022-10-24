@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.views import generic
 from django.contrib import messages
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import reverse, redirect
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 
@@ -12,7 +13,7 @@ from .forms import RegisterForm
 from django import forms
 
 from klass.models import Klass
-from result.models import Result, Token
+from result.models import Result, Token, Score
 
 User = get_user_model()
 
@@ -99,7 +100,7 @@ class UserLogin(generic.View):
     def get(self, request):
         return render(request, 'login.html')
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         if request.method == "POST":
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -109,16 +110,26 @@ class UserLogin(generic.View):
             if user is not None:
                 login(request, user)
                 if user.is_superuser:
-                    return render(request, 'admin_base_template.html')
+                    # <<<<<<< HEAD
+                    return HttpResponseRedirect(reverse('admin-dashboard'))
+# =======
+#                     return render(request, 'admin_base_template.html')
+# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
                 else:
                     klass = Klass.objects.filter(
                         teacher=request.user
-                    ).exist()
-                    if klass:
-                        return HttpResponseRedirect(
-                            reverse('class'))
+                    )
+                    if klass.exists():
+                        class_info = klass.first()
+# <<<<<<< HEAD
+                        return HttpResponseRedirect(reverse("teacher-class-detail"))
+# =======
+
+
+#                         return HttpResponseRedirect(reverse("teacher-class-detail", args=[class_info.pk]))
+# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
                     else:
-                        messages.error(
+                        messages.info(
                             request, 'Hi, you are yet to be assigned a class, if this seems to be an issue, please contact admin')
                         return HttpResponseRedirect(reverse('login'))
             else:
@@ -130,9 +141,9 @@ class UserLogin(generic.View):
 
 
 class UserLogout(generic.View):
-    def post(self, request):
+    def get(self, request):
         logout(request)
-        return HttpResponseRedirect(reverse('home'))
+        return HttpResponseRedirect(reverse('login'))
 
 
 def landing_page(request):
@@ -151,13 +162,13 @@ class CreateTokenView(generic.View):
     def get(self, request, *args, **kwargs):
         tokes = Token.objects.all()
         return render(
-            request, 'template_name.html', {"tokens": tokes}
+            request, 'klass/token_list.html', {"tokens": tokes}
         )
 
     def post(self, request):
         numbers = request.POST.get('number')
-        for number in range(numbers + 1):
-            Token.objects.create(token=self.token_generator())
+        for number in range(int(numbers)):
+            Token.objects.create(token=self.token_generator(), count=0)
 
         return HttpResponseRedirect(
             (request.META.get('HTTP_REFERER'))
@@ -167,35 +178,59 @@ class CreateTokenView(generic.View):
 class CheckResultView(generic.View):
 
     def get(self, request, *args, **kwargs):
-        context = {}
-        return render(request, 'result.html', context)
+        context = {
+            "sessions": ["2022/2023", "2023/2024", "2024/2025"],
+            "terms": ["first_term", "second_term", "third_term"]
+        }
+        return render(request, 'check_result.html', context)
 
     def post(self, request, *args, **kwargs):
+
         admission_num = request.POST.get('admission_number')
+        student_token = request.POST.get('token')
         academic_session = request.POST.get('session')
-        term = request.POST.get('term')
+        academic_term = request.POST.get('term')
 
         # token_check = Token.objects.filter(token=student_token).exist()
-        result_token = Result.objects.filter(
-            admission_number=admission_num,
-            session=academic_session,
-            term=term
-        ).exist()
-        if result_token:
-            if result_token != 5:
-                result_token.count += 1
-            messages.error(request, "A token can not be used more than 5 times")
+        try:
+            token = Token.objects.get(token=student_token)
+
+            if token:
+                if not token.result:
+                    token.count += 1
+
+                    result = Result.objects.filter(
+                        admission_number=admission_num,
+                        session=academic_session,
+                        term=academic_term
+                    )
+                    token.result = result.first()
+                    token.save()
+
+                    score = Score.objects.filter(result=result.first())
+
+                    return render(request, 'result_details.html', {
+                        "info": result.first(),
+                        "results": score})
+
+                if token.count is 5:
+                    messages.error(
+                        request, "A token can not be used more than 5 times")
+                    return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+                if token.result and token.count != 5:
+                    token.count += 1
+                    token.save()
+
+                    result = Result.objects.filter(
+                        admission_number=admission_num,
+                        session=academic_session,
+                        term=academic_term
+                    )
+                    score = Score.objects.filter(result=result.first())
+                    return render(request, 'result_details.html', {
+                        "info": result.first(),
+                        "results": score})
+
+        except Token.DoesNotExist:
+            messages.error(request, "The token is invalid")
             return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
-        else:
-            messages.error(request, "The token number you input is invalid")
-            return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
-
-        
-
-
-
-
-
-
-
-
