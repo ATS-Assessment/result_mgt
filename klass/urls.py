@@ -1,6 +1,4 @@
-# from .views import index, CreateResultView,\
-#     UpdateResultView, AllResultView,\
-#     ResultDetailView
+
 from . import views
 from account.views import CreateTokenView
 from result.views import DeleteSubjectView, ResultDetailView, AllResultView
@@ -37,7 +35,8 @@ urlpatterns = [
     path('edit/<int:pk>/admin/', views.EditClassAdminView.as_view(),
          name="edit-class-admin"),
     path('toggle-subject/<int:pk>/',
-         DeleteSubjectView.as_view(), name="toggle-subject")
+         DeleteSubjectView.as_view(), name="toggle-subject"),
+    path('send-result/<int:pk>/', views.generate_pdf, name="send-result"),
 ]
 
 urlpatterns += [

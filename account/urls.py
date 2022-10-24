@@ -9,6 +9,7 @@ from .pdf_generator import result_view, index
 from .views import RegisterView, UserLogin, UserLogout, Home, landing_page, CheckResultView
 
 urlpatterns = [
+
     path('home', Home.as_view(), name='admin-page'),
     path('index/', index, name='index'),
     path('index/result_view', result_view, name='result-view'),

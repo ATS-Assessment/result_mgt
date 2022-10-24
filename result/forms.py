@@ -12,7 +12,7 @@ class CreateResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CreateResultForm, self).__init__(*args, **kwargs)
 
-        self.fields["classes"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-gray-500 focus: border-gray-500 sm: text-sm border-gray-700  border-b-2 border-black"
+        self.fields["classes"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-gray-500 focus: border-gray-500 sm: text-sm border-gray-700  border-b-2 border-gray-900"
         # self.fields["current_teacher"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-gray-500 focus: border-gray-500 sm: text-sm border-gray-700 border-b-2 "
         self.fields["term"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-gray-500 focus: border-gray-500 sm: text-sm border-gray-700  border-b-2 "
         self.fields["session"].widget.attrs["class"] = "block max-w-lg w-full shadow-sm focus: ring-gray-500 focus: border-gray-500 sm: text-sm border-gray-700 border-b-2 "

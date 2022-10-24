@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from klass.models import Klass, Subject
+from .models import Klass, Subject
 
 # Register your models here.
 
