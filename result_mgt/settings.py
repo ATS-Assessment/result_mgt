@@ -92,9 +92,9 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'result',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
+        'NAME': 'resultMgt',
+        'USER': 'result_mgt_user',
+        'PASSWORD': 'adminadmin',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -142,7 +142,7 @@ STATIC_URL = 'static/'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'azubuinesamuel@gmail.com'
-EMAIL_HOST_PASSWORD = 'kwftekunbtwhscne'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Samuel from School Pro <azubuinesamuel1607@gmail.com>'
 
