@@ -1,5 +1,13 @@
 
 
+from django.conf import settings
+from django.template.loader import render_to_string
+import io
+from html import escape
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from email.message import EmailMessage
+from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, DetailView, View, ListView
@@ -527,6 +535,65 @@ def result_detail(request, pk):
     return render(request, 'klass/result_detail.html', {
         "result": result,
         "score": score})
+
+
+def render_to_pdf(template_src, context_dict):
+    html = render_to_string(template_src, context_dict)
+    result = io.BytesIO()
+
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("utf-8")), result)
+    print(pdf, "Ok")
+    if not pdf.err:
+        return result.getvalue()
+    return HttpResponse('We had some errors<pre>%s</pre>' % escape(html))
+
+
+def generate_pdf(request, pk):
+    # Retrieve data or whatever you need
+    # result = Result.objects.get(current_teacher__pk=request.user.pk, pk=pk)
+    # score = Score.objects.filter(result=result)
+    result = Result.objects.get(pk=pk)
+    context = {
+        "results": Score.objects.filter(result__pk=pk),
+        "info": result
+    }
+    pdf = render_to_pdf(
+        'klass/result_details.html',
+        {
+            'pagesize': 'A4',
+            "results": Score.objects.filter(result__pk=pk),
+            "info": result
+        }
+
+    )
+    print("Here", pdf)
+    mail_address = [result.guardian_email]
+    from_email = settings.DEFAULT_FROM_EMAIL
+    subject = "Termly Result Of your Ward"
+    message = "Dear Sir/Madam, Please find attached is a copy of your wards result for this term(in PDF format). We appreciate your trust and confidence in our capacities and capabilities to train and nurture your ward. We can't wait to welcome them back next term! Have an amazing holiday and Happy Halloween in Advance!."
+    # html_string = render_to_string(
+    #     'klass/result_detail.html',
+    #     {
+    #         'pagesize': 'A4',
+    #         "result": result,
+    #         "score": score})
+
+    # html = HTML(string=html_string)
+    # buffer = io.BytesIO()
+    # html.write_pdf(target=buffer)
+    # pdf = buffer.getvalue()
+    email_message = EmailMessage(
+        subject,
+        message,
+        to=mail_address,
+        from_email=from_email,
+    )
+    filename = 'Result.pdf'
+    mimetype_pdf = 'application/pdf'
+    email_message.attach(filename, pdf, mimetype_pdf)
+    email_message.send(fail_silently=False)  #
+
+    return HttpResponse(pdf, content_type='application/pdf')
 
 
 class AdminClassListView(AdminOnlyRequiredMixin, View):

@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'result_mgt',
+        'NAME': 'resultMgt',
         'USER': 'result_mgt_user',
         'PASSWORD': 'adminadmin',
         'HOST': 'localhost',
@@ -138,6 +138,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'azubuinesamuel@gmail.com'
+EMAIL_HOST_PASSWORD = 'kwftekunbtwhscne'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Samuel from School Pro <azubuinesamuel1607@gmail.com>'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

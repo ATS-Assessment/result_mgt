@@ -10,6 +10,7 @@ db.sqlite3
 migrations
 # C extensions
 theme
+settings
 *.so
 .resenv
 resenv

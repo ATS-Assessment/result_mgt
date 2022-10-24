@@ -8,12 +8,12 @@ urlpatterns = [
     # <<<<<<< HEAD
     # pat h('', index, name='index'),
     # path('create/', CreateResultView.as_view(), name='result-create'),
-    path('', index, name='index'),
-    path('create/', CreateResultView.as_view(), name='result-create'),
+    # path('', index, name='index'),
+    # path('create/', CreateResultView.as_view(), name='result-create'),
     # path('all-results/', AllResultView.as_view(), name='result-list-admin'),
     # path('all-results/<int:pk>/delete/', delete_result_view, name='result_delete'),
-    path('all-results/<int:pk>/update/',
-         UpdateResultView.as_view(), name='result_update'),
+    # path('all-results/<int:pk>/update/',
+    #      UpdateResultView.as_view(), name='result_update'),
 
 
     # =======
