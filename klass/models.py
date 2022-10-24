@@ -51,3 +51,6 @@ class Subject(models.Model):
 
     def __str__(self) -> str:
         return str(self.name)
+
+    class Meta:
+        unique_together = ('name', 'level')

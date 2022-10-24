@@ -590,7 +590,10 @@ def generate_pdf(request, pk):
     email_message.attach(filename, pdf, mimetype_pdf)
     email_message.send(fail_silently=False)  #
 
-    return HttpResponse(pdf, content_type='application/pdf')
+    messages.success(
+        request, f"Result has been successfully sent to the parent/guardian's email!")
+    return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
+    # return HttpResponse(pdf, content_type='application/pdf')
 
 
 class AdminClassListView(AdminOnlyRequiredMixin, View):
