@@ -100,3 +100,5 @@ __pypackages__/
 acctenv
 /acctenv
 .idea
+settings.py
+.settings.py

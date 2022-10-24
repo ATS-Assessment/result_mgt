@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'result',
+        'NAME': 'result_db',
         'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'PASSWORD':'@F3X2022',
+        'HOST':'localhost',
+        'PORT':'5432',
     }
 }
 

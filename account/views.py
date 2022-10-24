@@ -110,24 +110,17 @@ class UserLogin(generic.View):
             if user is not None:
                 login(request, user)
                 if user.is_superuser:
-                    # <<<<<<< HEAD
                     return HttpResponseRedirect(reverse('admin-dashboard'))
-# =======
-#                     return render(request, 'admin_base_template.html')
-# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
+
                 else:
                     klass = Klass.objects.filter(
                         teacher=request.user
                     )
                     if klass.exists():
                         class_info = klass.first()
-# <<<<<<< HEAD
+
                         return HttpResponseRedirect(reverse("teacher-class-detail"))
-# =======
 
-
-#                         return HttpResponseRedirect(reverse("teacher-class-detail", args=[class_info.pk]))
-# >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
                     else:
                         messages.info(
                             request, 'Hi, you are yet to be assigned a class, if this seems to be an issue, please contact admin')
@@ -195,29 +188,29 @@ class CheckResultView(generic.View):
         try:
             token = Token.objects.get(token=student_token)
 
-            if token:
-                if not token.result:
-                    token.count += 1
+            # if token:
+            #     if not token.result:
+            #         token.count += 1
 
-                    result = Result.objects.filter(
-                        admission_number=admission_num,
-                        session=academic_session,
-                        term=academic_term
-                    )
-                    token.result = result.first()
-                    token.save()
+            #         result = Result.objects.filter(
+            #             admission_number=admission_num,
+            #             session=academic_session,
+            #             term=academic_term
+            #         )
+            #         token.result = result.first()
+            #         token.save()
 
-                    score = Score.objects.filter(result=result.first())
+            #         score = Score.objects.filter(result=result.first())
 
-                    return render(request, 'result_details.html', {
-                        "info": result.first(),
-                        "results": score})
+            #         return render(request, 'result_details.html', {
+            #             "info": result.first(),
+            #             "results": score})
 
-                if token.count is 5:
+            if token.count is 5:
                     messages.error(
                         request, "A token can not be used more than 5 times")
                     return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
-                if token.result and token.count != 5:
+            if token.result and token.count != 5:
                     token.count += 1
                     token.save()
 

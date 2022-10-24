@@ -510,7 +510,7 @@ class EducatorDashBoard(LoginRequiredMixin, EducatorOnlyRequiredMixin, View):
 
 def results(request):
     results = Result.objects.filter(current_teacher__pk=request.user.pk)
-
+    context = {'results': results}
     return render(request, "klass/klass_detail.html", context)
 
 
