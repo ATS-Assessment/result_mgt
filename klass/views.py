@@ -549,9 +549,6 @@ def render_to_pdf(template_src, context_dict):
 
 
 def generate_pdf(request, pk):
-    # Retrieve data or whatever you need
-    # result = Result.objects.get(current_teacher__pk=request.user.pk, pk=pk)
-    # score = Score.objects.filter(result=result)
     result = Result.objects.get(pk=pk)
     context = {
         "results": Score.objects.filter(result__pk=pk),
