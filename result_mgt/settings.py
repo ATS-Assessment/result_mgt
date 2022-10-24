@@ -142,7 +142,7 @@ STATIC_URL = 'static/'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'azubuinesamuel@gmail.com'
-EMAIL_HOST_PASSWORD = 'kwftekunbtwhscne'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Samuel from School Pro <azubuinesamuel1607@gmail.com>'
 
