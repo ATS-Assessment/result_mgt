@@ -97,7 +97,7 @@ __pypackages__/
 /result_mgt/Scripts/python.exe
 /result_mgt/Scripts/pythonw.exe
 /result_mgt/pyvenv.cfg
-/requirements.txt
+# /requirements.txt
 /.idea/result_mgt.iml
 /result_mgt/Scripts/sqlformat.exe
 /.idea/vcs.xml
