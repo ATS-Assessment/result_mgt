@@ -77,7 +77,7 @@ class TeacherDetailAV(APIView):
     renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
 
     def get(self, request):
-        klass = Klass.objects.get(teacher=request.user)
+        klass = Klass.objects.get(teacher=request.user.id)
         serializer = self.serializer_class(klass)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -104,10 +104,10 @@ def render_to_pdf(template_src, context_dict):
 @renderer_classes((CustomRenderer, JSONRenderer))
 def generate_pdf(request, pk):
     result = Result.objects.get(pk=pk)
-    context = {
-        "results": Score.objects.filter(result__pk=pk),
-        "info": result
-    }
+    # context = {
+    #     "results": Score.objects.filter(result__pk=pk),
+    #     "info": result
+    # }
     pdf = render_to_pdf(
         'klass/result_details.html',
         {
