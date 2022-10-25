@@ -57,12 +57,15 @@ class ClassCreateView(LoginRequiredMixin, AdminOnlyRequiredMixin, CreateView):
         return found_subject
 
     def post(self, request, *args, **kwargs):
+        print(request.POST, "Ok")
         class_name = request.POST.get('class_name', '')
         class_size = request.POST.get('class_size', '')
         educator = request.POST.get('teacher', '')
         session = request.POST.get('session', '')
         dict_object = request.POST.dict()
+        print(request.POST.dict(), '2')
         subjects = self.find_subjects('subject', dict_object)
+        print(subjects, '3')
         request_body = {
             "name": class_name,
             "no_of_students": class_size,
@@ -479,12 +482,6 @@ class EducatorDashBoard(LoginRequiredMixin, EducatorOnlyRequiredMixin, View):
         }
 
         return render(request, "klass/admin_dashboard.html", context)
-
-
-def results(request):
-    results = Result.objects.filter(current_teacher__pk=request.user.pk)
-
-    return render(request, "klass/klass_detail.html", context)
 
 
 @ login_required(login_url="login")
