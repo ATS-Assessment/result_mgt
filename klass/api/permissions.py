@@ -1,4 +1,4 @@
-import resource
+from ..models import Klass
 from rest_framework.permissions import (
     DjangoModelPermissions, IsAdminUser, BasePermission, SAFE_METHODS)
 
@@ -18,3 +18,9 @@ class IsEducatorOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         return obj.teacher == request.user
+
+
+class IsEducator(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if Klass.objects.get(teacher=request.user):
+            return True

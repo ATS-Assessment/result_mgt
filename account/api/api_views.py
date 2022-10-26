@@ -61,9 +61,9 @@ class EducatorsOnly(generics.ListAPIView):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class LogoutAPIView(APIView):
-#
-#     def get(self, request):
-#         request = request.user.auth_token.delete()
-#         logout(request)
-#         return Response('You logged out successfully')
+class LogoutAPIView(APIView):
+
+    def get(self, request):
+        request = request.user.auth_token.delete()
+        logout(request)
+        return Response('You logged out successfully')
