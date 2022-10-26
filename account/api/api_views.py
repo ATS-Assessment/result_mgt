@@ -3,8 +3,8 @@ from django.contrib.auth import authenticate, logout
 from django.conf import settings as app_settings
 
 from .serializers import UserLoginSerializer, UserSerializer, EducatorsSerializer
+from klass.models import Klass
 
-from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
@@ -49,16 +49,17 @@ class EducatorsOnly(generics.ListAPIView):
     renderer_classes = (CustomRenderer, )
 
     def get_queryset(self):
-        return User.objects.filter(role='teacher')
+        return User.objects.filter(is_superuser=False)
 
 
-    # def post(self, request):
-    #     serializer = UserSerializer(request.data)
-    #     print(serializer)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class TeacherWithoutClass(generics.ListAPIView):
+    serializer_class = EducatorsSerializer
+    renderer_classes = (CustomRenderer,)
+
+    def get_queryset(self):
+        classes = Klass.objects.all().values_list('teacher')
+        class_teacher = User.objects.exclude(pk__in=classes)
+        return class_teacher
 
 
 # class LogoutAPIView(APIView):
