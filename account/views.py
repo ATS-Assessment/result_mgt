@@ -213,7 +213,7 @@ class CheckResultView(generic.View):
                         "info": result.first(),
                         "results": score})
 
-                if token.count is 5:
+                if token.count == 5:
                     messages.error(
                         request, "A token can not be used more than 5 times")
                     return HttpResponseRedirect((request.META.get('HTTP_REFERER')))
