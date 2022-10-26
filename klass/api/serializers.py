@@ -2,7 +2,7 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from account.models import User
-from result.models import Result
+from result.models import Result, Score
 from ..models import Klass, Subject
 
 
@@ -41,7 +41,7 @@ class ResultSerializer(serializers.ModelSerializer):
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("email", "role", "username", "full_name")
+        fields = ("email", "full_name")
 
 
 class EducatorDashBoardSerializer(serializers.ModelSerializer):
@@ -128,3 +128,68 @@ class EducatorEditClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Klass
         fields = ("name", "subjects", "session", "year", )
+
+
+class ScoreListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = '__all__'
+
+
+class ResultListSerializer(serializers.ModelSerializer):
+    subjects = serializers.SerializerMethodField()
+    classes = EducatorEditClassSerializer()
+    current_teacher = TeacherSerializer()
+
+    def get_subjects(self, obj):
+        data = Score.objects.filter(result=obj)
+        serialized_data = ScoreListSerializer(data, many=True)
+        return serialized_data.data
+
+    class Meta:
+        model = Result
+        fields = '__all__'
+        extra_kwargs = {
+            'subjects': {'read_only': True},
+            'classes': {'read_only': True},
+            'current_teacher': {'read_only': True}
+        }
+
+
+class ResultCreateSerializer(serializers.ModelSerializer):
+    subjects = ScoreListSerializer(write_only=True, many=True)
+
+    class Meta:
+        model = Result
+        fields = '__all__'
+        extra_kwargs = {
+            "subjects": {'write_only': True}
+        }
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        teacher_class = Klass.objects.filter(teacher=request.user)
+
+        result = Result.objects.filter(
+            title=attrs['admission_number'], session=attrs['session'], term=attrs['term'])
+        if result.exists():
+            raise serializers.ValidationError(
+                'A result with same details already exist')
+        if not teacher_class.exists():
+            raise serializers.ValidationError(
+                'Invalid Class')
+
+        return attrs
+
+    def create(self, validated_data):
+        subjects = validated_data.pop('subjects')
+        request = self.context.get('request')
+        teacher_class = Klass.objects.filter(teacher=request.user).first()
+        result_instance = Result(
+            teacher=request.user, classes=teacher_class, **validated_data)
+        result_instance.save()
+        for subject in subjects:
+            result_score = Score(
+                result=Result.objects.get(pk=result_instance.pk), **subject)
+            result_score.save()
+        return result_instance

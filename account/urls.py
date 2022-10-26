@@ -26,13 +26,21 @@ urlpatterns = [
 
 ]
 
-urlpatterns +=[
+urlpatterns += [
     # path(f'{api_prefix}', landing_page, name="home"),
     path(f'{api_prefix}/login', LoginAPIView.as_view(), name='login'),
     path(f'{api_prefix}/educators', EducatorsOnly.as_view(), name='educators'),
     path(f'{api_prefix}/register', RegisterAPIView.as_view(), name='register'),
+<<<<<<< HEAD
     path(f'{api_prefix}/teachers-without-class', TeacherWithoutClass.as_view(), name='teachers-without-class'),
     path(f'{api_prefix}/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path(f'{api_prefix}/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
+=======
+    # path(f'{api_prefix}/check-result', CheckResultView.as_view(), name='check-result'),
+    path(f'{api_prefix}/token', TokenObtainPairView.as_view(),
+         name='token_obtain_pair'),
+    path(f'{api_prefix}/token/refresh',
+         TokenRefreshView.as_view(), name='token_refresh'),
+>>>>>>> 2b22a46de0382741d0ba409bc7703662a5a61e53
 
 ]
