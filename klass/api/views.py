@@ -16,14 +16,19 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import login, logout, authenticate
 from account.models import User
-from result.models import Result, Score
+from result.models import Result, Score,  Token
 from ..models import Klass, Subject
 
-from .serializers import KlassCreateSerializer, AdminEditClassSerializer, EducatorEditClassSerializer, ClassDetailSerializer, ClassCreateSerializer, SubjectCreateSerializer, EducatorDashBoardSerializer
+from .serializers import KlassCreateSerializer, \
+    AdminEditClassSerializer, EducatorEditClassSerializer,\
+    ClassDetailSerializer, ClassCreateSerializer,\
+    SubjectCreateSerializer, EducatorDashBoardSerializer, \
+    ResultListSerializer, ResultCreateSerializer, ScoreListSerializer
 from .renderers import CustomRenderer
 
 
@@ -150,3 +155,35 @@ class AdminEditClassAV(generics.RetrieveUpdateAPIView):
 class EducatorEditClassAV(generics.RetrieveUpdateAPIView):
     queryset = Klass.objects.all()
     serializer_class = EducatorEditClassSerializer
+
+
+class ResultAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Result.objects.all()
+    serializer_class = ResultListSerializer
+
+
+class AddResultAPIView(generics.CreateAPIView):
+    queryset = Result.objects.all()
+    serializer_class = ResultCreateSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class StudentResultAPIView(generics.RetrieveUpdateAPIView):
+    queryset = Result.objects.all()
+    serializer_class = ResultListSerializer
+
+    def get(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            admission_num = request.data.get('admission_number')
+            student_token = request.data.get('token')
+            academic_session = request.data.get('session')
+            academic_term = request.data.get('term')
+
+            token = Token.objects.get(token=student_token)
+
+
+class ResultScoresAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Score.objects.all()
+    serializer_class = ScoreListSerializer
+    permission_classes = (IsAuthenticated,)

@@ -14,8 +14,6 @@ urlpatterns = [
     # path('all-results/<int:pk>/delete/', delete_result_view, name='result_delete'),
     # path('all-results/<int:pk>/update/',
     #      UpdateResultView.as_view(), name='result_update'),
-
-
     # =======
     # path('', index, name='index'),
     # path('create/', CreateResultView.as_view(), name='result_create'),
@@ -25,5 +23,4 @@ urlpatterns = [
     # path('all-results/<int:pk>/update/',
     #      UpdateResultView.as_view(), name='result_update'),
     # >>>>>>> 40e275b1912570e3aef60a26e4f60e387c4e9299
-
 ]

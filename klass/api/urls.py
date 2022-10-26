@@ -23,8 +23,12 @@ urlpatterns = [
 
 
     path('create/', views.ClassCreateAV.as_view(), name="create-class"),
-    # path('result/<int:pk>/', views.result_detail, name="result-detail"),
+    path('result/<int:pk>/', views.ResultAPIView.as_view(), name="result-detail"),
+    path('add-result', views.AddResultAPIView.as_view(), name="add-result"),
     # path('<int:pk>/', ResultDetailView.as_view(), name='result_detail'),
+    path('score/<int:pk>', views.ResultScoresAPIView.as_view(), name="score-details"),
+    path('student/result/<int:pk>/',
+         views.StudentResultAPIView.as_view(), name="view-student"),
 
     #     path('result/<int:pk>/edit/', views.EditResult.as_view(), name="edit-result"),
     path('result/<int:pk>/delete/',
