@@ -28,7 +28,8 @@ from .serializers import KlassCreateSerializer, \
     AdminEditClassSerializer, EducatorEditClassSerializer,\
     ClassDetailSerializer, ClassCreateSerializer,\
     SubjectCreateSerializer, EducatorDashBoardSerializer, \
-    ResultListSerializer, ResultCreateSerializer, ScoreListSerializer
+    ResultListSerializer, ResultCreateSerializer, ScoreListSerializer, \
+    StudentResultListSerializer
 from .renderers import CustomRenderer
 
 
@@ -162,25 +163,67 @@ class ResultAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ResultListSerializer
 
 
+class AdminResultAPIView(generics.ListAPIView):
+    queryset = Result.objects.all()
+    serializer_class = ResultListSerializer
+
+
+class TeacherResultAPIView(generics.ListAPIView):
+    queryset = Result.objects.all()
+    serializer_class = ResultListSerializer
+    lookup_field = 'classes_id'
+
+
 class AddResultAPIView(generics.CreateAPIView):
     queryset = Result.objects.all()
     serializer_class = ResultCreateSerializer
     permission_classes = (IsAuthenticated,)
 
 
-class StudentResultAPIView(generics.RetrieveUpdateAPIView):
+class StudentResultAPIView(APIView):
     queryset = Result.objects.all()
-    serializer_class = ResultListSerializer
+    serializer_class = StudentResultListSerializer
 
-    def get(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            admission_num = request.data.get('admission_number')
-            student_token = request.data.get('token')
-            academic_session = request.data.get('session')
-            academic_term = request.data.get('term')
+    def post(self, request):
+        admission_num = request.data.get('admission_number')
+        student_token = request.data.get('token')
+        academic_session = request.data.get('session')
+        academic_term = request.data.get('term')
 
+        try:
             token = Token.objects.get(token=student_token)
+
+            result = Result.objects.filter(
+                admission_number=admission_num,
+                session=academic_session,
+                term=academic_term)
+
+            print(result.values().first())
+
+            if not result:
+                return Response({"message": "Invalid Result Details"}, status=status.HTTP_409_CONFLICT)
+
+            serializer = self.serializer_class(data=result.values().first())
+
+            if token:
+                if not token.result:
+                    token.count += 1
+                    token.result = result.first()
+                    token.save()
+
+                    return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+                if token.count == 5:
+                    return Response({"message": "A token can not be used more than 5 times"})
+                print(token.result and token.count !=
+                      5 and token.result == result)
+                if token.result and token.count != 5:
+                    token.count += 1
+                    token.save()
+                    return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({"data": "Something wrong with the token"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Token.DoesNotExist:
+            return Response({"message": "Invalid Token"})
 
 
 class ResultScoresAPIView(generics.RetrieveUpdateDestroyAPIView):

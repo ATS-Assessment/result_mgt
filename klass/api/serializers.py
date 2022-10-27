@@ -136,6 +136,27 @@ class ScoreListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class StudentResultListSerializer(serializers.ModelSerializer):
+    subjects = serializers.SerializerMethodField()
+    classes = EducatorEditClassSerializer(read_only=True)
+    current_teacher = TeacherSerializer(read_only=True)
+
+    def get_subjects(self, obj):
+        print(obj)
+        data = Score.objects.filter(result=obj)
+        serialized_data = ScoreListSerializer(data, many=True)
+        return serialized_data.data
+
+    class Meta:
+        model = Result
+        # fields =
+        extra_kwargs = {
+            'subjects': {'read_only': True},
+            'classes': {'read_only': True},
+            'current_teacher': {'read_only': True}
+        }
+
+
 class ResultListSerializer(serializers.ModelSerializer):
     subjects = serializers.SerializerMethodField()
     classes = EducatorEditClassSerializer()
