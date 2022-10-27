@@ -1,4 +1,5 @@
 
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.permissions import IsAdminUser
@@ -14,6 +15,7 @@ from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -21,6 +23,7 @@ from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import login, logout, authenticate
 from account.models import User
+from klass.api.permissions import IsEducator, IsEducatorOrReadOnly
 from result.models import Result, Score,  Token
 from ..models import Klass, Subject
 
@@ -51,15 +54,33 @@ class SubjectCreateAV(generics.CreateAPIView):
     renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
 
 
-class SubjectListAV(generics.ListAPIView):
+class AdminSubjectListAV(generics.ListAPIView):
     serializer_class = SubjectCreateSerializer
     queryset = Subject.objects.all()
+    permission_classes = [IsAdminUser]
     renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
+
+
+class DeleteSubjectView(APIView):
+    serializer_class = SubjectListSerializer
+    permission_classes = [IsAdminUser]
+    renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
+
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            get_obj = Subject.objects.get(pk=pk)
+            get_obj.is_active = not (get_obj.is_active)
+
+            get_obj.save()
+            return Response({"message": f"{get_obj.name} was successfully deactivated!"}, status=status.HTTP_204_NO_CONTENT)
+        except Subject.DoesNotExist as e:
+            return Response({"message": f"{get_obj.name} deactivation failed! or {e} "}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EducatorDashBoardAV(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EducatorDashBoardSerializer
     queryset = Result.objects.all()
+    permission_classes = [IsEducator]
     renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
 
     def get_queryset(self):
@@ -75,6 +96,7 @@ class EducatorDashBoardAV(generics.RetrieveUpdateDestroyAPIView):
 class ClassDetailAV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Klass.objects.all()
     serializer_class = ClassDetailSerializer
+    permission_classes = [IsAuthenticated, IsEducator]
     renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
 
 
@@ -106,8 +128,8 @@ def render_to_pdf(template_src, context_dict):
     return Response({"message": "We had some errors<pre>%s</pre>"}, status=status.HTTP_200_OK)
 
 
-@api_view(('GET',))
-@renderer_classes((CustomRenderer, JSONRenderer))
+@ api_view(('GET',))
+@ renderer_classes((CustomRenderer, JSONRenderer))
 def generate_pdf(request, pk):
     result = Result.objects.get(pk=pk)
     # context = {
@@ -150,7 +172,30 @@ def toggle_delete_result(request, pk):
 class AdminEditClassAV(generics.RetrieveUpdateAPIView):
     queryset = Klass.objects.all()
     serializer_class = AdminEditClassSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
+    renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
+
+    def perform_update(self, serializer):
+        klass = Klass.objects.get(pk=self.kwargs.get("pk"))
+        # subjects = serializer.validated_data.get("subjects")
+        # for subject in subjects:
+        #     klass.subjects.append(subject)
+
+        if klass.teacher.full_name != serializer.validated_data.get("teacher"):
+            teacher_dict = {
+                'name': klass.teacher.full_name,
+                'session': klass.session
+            }
+            pre_teacher = [klass.previous_teachers].append(teacher_dict)
+
+            klass.previous_teachers = pre_teacher
+
+        check_teacher = Klass.objects.filter(
+            teacher__full_name=serializer.validated_data.get("teacher"))
+        if check_teacher:
+            raise ValidationError(
+                "The Teacher has already been assigned to a class")
+        klass.save()
 
 
 class EducatorEditClassAV(generics.RetrieveUpdateAPIView):
@@ -158,9 +203,11 @@ class EducatorEditClassAV(generics.RetrieveUpdateAPIView):
     serializer_class = EducatorEditClassSerializer
 
 
-class ResultAPIView(generics.RetrieveUpdateAPIView):
+class ResultAPIView(ModelViewSet):
     queryset = Result.objects.all()
     serializer_class = ResultListSerializer
+    renderer_classes = [CustomRenderer, BrowsableAPIRenderer]
+    permission_classes = [IsEducatorOrReadOnly]
 
 
 class AdminResultAPIView(generics.ListAPIView):

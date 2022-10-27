@@ -103,9 +103,9 @@ WSGI_APPLICATION = 'result_mgt.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'result',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
+        'NAME': 'resultMgt',
+        'USER': 'result_mgt_user',
+        'PASSWORD': 'adminadmin',
         'HOST': 'localhost',
         'PORT': '5432',
     }

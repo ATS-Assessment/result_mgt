@@ -14,17 +14,21 @@ class KlassCreateSerializer(serializers.ModelSerializer):
     # def create(self, validated_data):
     #     klass = Klass.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        user = self.context.get("request").user
-        # instance.
+    # def update(self, instance, validated_data):
+    #     user = self.context.get("request").user
+    #     # instance.
 
-        return instance
+    #     return instance
 
 
 class SubjectCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ("name", "level")
+
+    # def create(self, validated_data):
+    #     print(validated_data)
+    #     return super().create(validated_data)
 
 
 class SubjectListSerializer(serializers.ModelSerializer):
@@ -112,7 +116,6 @@ class ClassCreateSerializer(serializers.ModelSerializer):
 
 
 class ClassDetailSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Klass
         fields = "__all__"
