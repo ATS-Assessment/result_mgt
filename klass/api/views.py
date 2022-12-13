@@ -32,7 +32,7 @@ from .serializers import KlassCreateSerializer, \
     ClassDetailSerializer, ClassCreateSerializer,\
     SubjectCreateSerializer, EducatorDashBoardSerializer, \
     ResultListSerializer, ResultCreateSerializer, ScoreListSerializer, \
-    StudentResultListSerializer
+    StudentResultListSerializer, SubjectListSerializer
 from .renderers import CustomRenderer
 
 

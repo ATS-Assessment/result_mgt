@@ -34,6 +34,7 @@ class SubjectCreateSerializer(serializers.ModelSerializer):
 class SubjectListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
+        fields = "__all_"
 
 
 class ResultSerializer(serializers.ModelSerializer):
